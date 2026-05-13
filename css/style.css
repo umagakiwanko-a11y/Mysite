@@ -316,14 +316,14 @@ body {
     var(--white) 0%,
     var(--glow) 25%,
     var(--white) 50%,
-    var(--biolum) 75%,
+    var(--ocean-100) 75%,
     var(--white) 100%
   );
   background-size: 300% 100%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  animation: fadeInUp 1s ease 0.4s both, titleWave 8s ease-in-out infinite 1.5s;
+  animation: fadeInUp 1s ease 0.4s both, titleWave 16s ease-in-out infinite 1.5s;
   filter: drop-shadow(0 0 40px rgba(0, 212, 255, 0.15));
 }
 
