@@ -196,7 +196,7 @@ main {
 }
 
 .hero-photo,
-.story-photo {
+.story-photos {
   position: relative;
   overflow: hidden;
   border: 1px solid rgba(41, 37, 33, 0.18);
@@ -206,113 +206,25 @@ main {
 
 .hero-photo {
   min-height: 560px;
-  background:
-    radial-gradient(circle at 44% 40%, rgba(255,255,255,0.25), transparent 16rem),
-    linear-gradient(120deg, rgba(255,255,255,0.14), transparent 42%),
-    linear-gradient(18deg, var(--wood-dark), var(--wood) 48%, #b37a47);
-}
-
-.hero-photo::before,
-.counter-grain {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    repeating-linear-gradient(7deg, rgba(255,255,255,0.08) 0 2px, transparent 2px 18px),
-    repeating-linear-gradient(95deg, rgba(57,34,19,0.24) 0 1px, transparent 1px 12px);
-  opacity: 0.72;
+  background: var(--wood-dark);
 }
 
 .hero-photo::after {
   content: '';
   position: absolute;
-  inset: 7%;
-  border: 1px solid rgba(255,255,255,0.18);
-  border-radius: 50%;
+  inset: 0;
   background:
-    radial-gradient(ellipse at 50% 50%, rgba(244,240,230,0.2), rgba(244,240,230,0.06) 55%, transparent 56%);
+    linear-gradient(120deg, rgba(255, 255, 255, 0.18), transparent 34%),
+    linear-gradient(180deg, transparent 55%, rgba(23, 22, 21, 0.2));
+  pointer-events: none;
 }
 
-.plate-shadow {
-  position: absolute;
-  left: 15%;
-  right: 13%;
-  bottom: 21%;
-  height: 12%;
-  background: radial-gradient(ellipse, rgba(20, 14, 10, 0.35), transparent 70%);
-  filter: blur(10px);
-}
-
-.sushi-piece {
-  position: absolute;
-  z-index: 2;
-  width: 10rem;
-  height: 5.8rem;
-  border-radius: 52% 48% 45% 45%;
-  background: var(--paper-light);
-  box-shadow: 0 16px 26px rgba(23, 22, 21, 0.28);
-}
-
-.sushi-piece::before {
-  content: '';
-  position: absolute;
-  left: 11%;
-  right: 11%;
-  bottom: 12%;
-  height: 42%;
-  border-radius: 42%;
-  background:
-    repeating-linear-gradient(90deg, rgba(41,37,33,0.1) 0 2px, transparent 2px 9px),
-    #f8f5ee;
-}
-
-.sushi-piece span {
-  position: absolute;
-  left: 4%;
-  right: 4%;
-  top: -12%;
-  height: 62%;
-  border-radius: 54% 48% 45% 50%;
-  box-shadow: inset 0 -8px 16px rgba(0,0,0,0.12);
-}
-
-.sushi-piece.tuna {
-  left: 18%;
-  bottom: 36%;
-  transform: rotate(-9deg);
-}
-
-.sushi-piece.tuna span {
-  background:
-    linear-gradient(110deg, rgba(255,255,255,0.28), transparent 28%),
-    repeating-linear-gradient(18deg, rgba(255,255,255,0.2) 0 4px, transparent 4px 16px),
-    #b4443d;
-}
-
-.sushi-piece.whitefish {
-  left: 41%;
-  bottom: 45%;
-  transform: rotate(7deg);
-}
-
-.sushi-piece.whitefish span {
-  background:
-    linear-gradient(110deg, rgba(255,255,255,0.45), transparent 30%),
-    repeating-linear-gradient(-18deg, rgba(185,150,84,0.22) 0 3px, transparent 3px 15px),
-    #f4efe4;
-}
-
-.sushi-piece.egg {
-  right: 12%;
-  bottom: 34%;
-  transform: rotate(-2deg);
-}
-
-.sushi-piece.egg span {
-  background:
-    linear-gradient(110deg, rgba(255,255,255,0.3), transparent 36%),
-    repeating-linear-gradient(0deg, rgba(109,74,28,0.08) 0 3px, transparent 3px 10px),
-    #d9a948;
+.hero-photo img {
+  width: 100%;
+  height: 100%;
+  min-height: 560px;
+  display: block;
+  object-fit: cover;
 }
 
 .intro {
@@ -406,58 +318,34 @@ main {
   align-items: center;
 }
 
-.story-photo {
-  min-height: 480px;
+.story-photos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+  padding: 0.55rem;
   background:
-    linear-gradient(180deg, rgba(23,22,21,0.2), rgba(23,22,21,0.7)),
-    repeating-linear-gradient(90deg, #34261d 0 18px, #2a1e17 18px 36px);
+    repeating-linear-gradient(8deg, rgba(255,255,255,0.06) 0 1px, transparent 1px 12px),
+    linear-gradient(135deg, #2f2118, #8a5d35);
 }
 
-.story-photo::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(circle at 50% 10%, rgba(224, 167, 77, 0.35), transparent 15rem),
-    repeating-linear-gradient(7deg, rgba(255,255,255,0.04) 0 1px, transparent 1px 15px);
+.photo-tile {
+  min-height: 10.5rem;
+  overflow: hidden;
+  border-radius: 5px;
+  background: var(--wood-dark);
 }
 
-.lantern {
-  position: absolute;
-  left: 50%;
-  top: 10%;
-  width: 5rem;
-  height: 8rem;
-  transform: translateX(-50%);
-  border-radius: 45% 45% 38% 38%;
-  background: radial-gradient(circle at 50% 35%, #ffefc8, #c65136 68%, #6f1e1b);
-  box-shadow: 0 0 60px rgba(255, 205, 124, 0.6);
+.photo-tile.large {
+  grid-column: span 2;
+  min-height: 17rem;
 }
 
-.counter {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 20%;
-  height: 26%;
-  background:
-    repeating-linear-gradient(4deg, rgba(255,255,255,0.08) 0 1px, transparent 1px 14px),
-    linear-gradient(90deg, #5b351d, #a87542 50%, #5a351f);
+.photo-tile img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
 }
-
-.seat {
-  position: absolute;
-  bottom: 9%;
-  width: 4rem;
-  height: 5rem;
-  border-radius: 45% 45% 20% 20%;
-  background: #161412;
-  box-shadow: 0 18px 30px rgba(0,0,0,0.3);
-}
-
-.seat-one { left: 18%; }
-.seat-two { left: 43%; }
-.seat-three { right: 18%; }
 
 .story-copy p:not(.eyebrow) {
   color: var(--soft-ink);
@@ -645,12 +533,11 @@ dd {
     min-height: 360px;
   }
 
-  .sushi-piece {
-    width: 7rem;
-    height: 4.2rem;
+  .hero-photo img {
+    min-height: 360px;
   }
 
-  .story-photo {
+  .story-photos {
     min-height: 360px;
   }
 
