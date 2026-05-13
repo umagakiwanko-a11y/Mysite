@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>the Hayagaki | Portfolio</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="particle-canvas"></div>
+  <div class="light-rays"></div>
+
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="#hero" class="nav-logo">the Hayagaki</a>
+      <button class="nav-toggle" id="navToggle" aria-label="メニュー">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="#services">Services</a></li>
+        <li><a href="#gallery">Works</a></li>
+        <li><a href="#profile">Profile</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="hero" id="hero">
+    <div class="hero-content">
+      <div class="hero-badge">Welcome to the Deep</div>
+      <h1 class="hero-title">
+        <span class="title-line">the</span>
+        <span class="title-line title-main">Hayagaki</span>
+      </h1>
+      <p class="hero-subtitle">業務改善 × Web制作で、ビジネスの可能性を深く広げる</p>
+      <div class="hero-cta">
+        <a href="#services" class="btn btn-primary">サービスを見る</a>
+        <a href="#contact" class="btn btn-outline">お問い合わせ</a>
+      </div>
+    </div>
+    <div class="hero-scroll">
+      <div class="scroll-indicator">
+        <span>Scroll</span>
+        <div class="scroll-line"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="services" id="services">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-label">Services</span>
+        <h2 class="section-title">提供サービス</h2>
+        <p class="section-desc">業務の効率化からWeb制作まで、課題解決に必要な技術を幅広くカバーします。</p>
+      </div>
+
+      <div class="services-grid">
+        <div class="service-card reveal" data-delay="0">
+          <div class="service-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M9 17H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-4"/>
+              <path d="M12 15l-3 6h6l-3-6z"/>
+            </svg>
+          </div>
+          <h3>Webサイト制作</h3>
+          <p>レスポンシブデザインに対応した高品質なWebサイトを制作します。コーポレートサイト、ブランドサイトなど目的に合わせた設計を行います。</p>
+          <ul class="service-features">
+            <li>レスポンシブ対応</li>
+            <li>SEO最適化</li>
+            <li>アニメーション実装</li>
+            <li>パフォーマンス最適化</li>
+          </ul>
+        </div>
+
+        <div class="service-card reveal" data-delay="1">
+          <div class="service-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="2" y="3" width="20" height="14" rx="2"/>
+              <path d="M8 21h8"/><path d="M12 17v4"/>
+              <path d="M7 8l3 3-3 3"/><path d="M13 14h4"/>
+            </svg>
+          </div>
+          <h3>LP（ランディングページ）制作</h3>
+          <p>コンバージョンを意識した設計で、成果を出すLPを制作します。A/Bテストに対応した構成で効果を最大化します。</p>
+          <ul class="service-features">
+            <li>CVR最適化設計</li>
+            <li>ファーストビュー設計</li>
+            <li>CTA最適配置</li>
+            <li>高速表示対応</li>
+          </ul>
+        </div>
+
+        <div class="service-card reveal" data-delay="2">
+          <div class="service-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+              <path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <h3>業務改善・自動化</h3>
+          <p>手作業で行っている業務を分析し、ツールやシステムで自動化。日常業務の効率を大幅に向上させます。</p>
+          <ul class="service-features">
+            <li>業務フロー分析</li>
+            <li>自動化ツール開発</li>
+            <li>データ連携構築</li>
+            <li>運用コスト削減</li>
+          </ul>
+        </div>
+
+        <div class="service-card reveal" data-delay="3">
+          <div class="service-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+              <line x1="12" y1="22.08" x2="12" y2="12"/>
+            </svg>
+          </div>
+          <h3>システム開発・API連携</h3>
+          <p>既存のシステム同士を繋ぎ、データの一元管理を実現。API連携やカスタムシステムの開発を行います。</p>
+          <ul class="service-features">
+            <li>API設計・連携</li>
+            <li>データベース設計</li>
+            <li>管理画面開発</li>
+            <li>既存システム統合</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="gallery" id="gallery">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-label">Works</span>
+        <h2 class="section-title">制作実績</h2>
+        <p class="section-desc">これまでに手がけたプロジェクトの一部をご紹介します。</p>
+      </div>
+
+      <div class="gallery-filter reveal">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="web">Web制作</button>
+        <button class="filter-btn" data-filter="lp">LP</button>
+        <button class="filter-btn" data-filter="tool">業務改善</button>
+      </div>
+
+      <div class="gallery-grid">
+        <div class="gallery-item reveal" data-category="web">
+          <div class="gallery-thumb">
+            <div class="gallery-placeholder">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+                <path d="M21 15l-5-5L5 21"/>
+              </svg>
+              <span>Coming Soon</span>
+            </div>
+          </div>
+          <div class="gallery-info">
+            <span class="gallery-tag">Web制作</span>
+            <h3>プロジェクト名</h3>
+            <p>プロジェクトの説明が入ります。</p>
+          </div>
+        </div>
+
+        <div class="gallery-item reveal" data-category="lp">
+          <div class="gallery-thumb">
+            <div class="gallery-placeholder">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+                <path d="M21 15l-5-5L5 21"/>
+              </svg>
+              <span>Coming Soon</span>
+            </div>
+          </div>
+          <div class="gallery-info">
+            <span class="gallery-tag">LP制作</span>
+            <h3>プロジェクト名</h3>
+            <p>プロジェクトの説明が入ります。</p>
+          </div>
+        </div>
+
+        <div class="gallery-item reveal" data-category="tool">
+          <div class="gallery-thumb">
+            <div class="gallery-placeholder">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+                <path d="M21 15l-5-5L5 21"/>
+              </svg>
+              <span>Coming Soon</span>
+            </div>
+          </div>
+          <div class="gallery-info">
+            <span class="gallery-tag">業務改善</span>
+            <h3>プロジェクト名</h3>
+            <p>プロジェクトの説明が入ります。</p>
+          </div>
+        </div>
+
+        <div class="gallery-item reveal" data-category="web">
+          <div class="gallery-thumb">
+            <div class="gallery-placeholder">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+                <path d="M21 15l-5-5L5 21"/>
+              </svg>
+              <span>Coming Soon</span>
+            </div>
+          </div>
+          <div class="gallery-info">
+            <span class="gallery-tag">Web制作</span>
+            <h3>プロジェクト名</h3>
+            <p>プロジェクトの説明が入ります。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="profile" id="profile">
+    <div class="container">
+      <div class="profile-wrapper reveal">
+        <div class="profile-image">
+          <div class="profile-placeholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </div>
+        </div>
+        <div class="profile-content">
+          <span class="section-label">Profile</span>
+          <h2 class="section-title">プロフィール</h2>
+          <div class="profile-text">
+            <p>はじめまして。the Hayagaki として活動しています。</p>
+            <p>業務改善やWebサイト・LP制作を通じて、お客様のビジネス課題を解決するお手伝いをしています。「もっと効率的に」「もっと伝わるように」を常に考え、一つひとつのプロジェクトに丁寧に取り組んでいます。</p>
+          </div>
+          <div class="profile-skills">
+            <h3>Skills</h3>
+            <div class="skill-tags">
+              <span class="skill-tag">HTML / CSS</span>
+              <span class="skill-tag">JavaScript</span>
+              <span class="skill-tag">Web Design</span>
+              <span class="skill-tag">LP制作</span>
+              <span class="skill-tag">業務改善</span>
+              <span class="skill-tag">自動化</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact" id="contact">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-label">Contact</span>
+        <h2 class="section-title">お問い合わせ</h2>
+        <p class="section-desc">お仕事のご依頼・ご相談はお気軽にどうぞ。</p>
+      </div>
+      <div class="contact-wrapper reveal">
+        <form class="contact-form" id="contactForm" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+          <div class="form-group">
+            <label for="name">お名前</label>
+            <input type="text" id="name" name="name" required>
+          </div>
+          <div class="form-group">
+            <label for="email">メールアドレス</label>
+            <input type="email" id="email" name="email" required>
+          </div>
+          <div class="form-group">
+            <label for="subject">件名</label>
+            <input type="text" id="subject" name="subject" required>
+          </div>
+          <div class="form-group">
+            <label for="message">メッセージ</label>
+            <textarea id="message" name="message" rows="6" required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-full">送信する</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-logo">the Hayagaki</div>
+        <div class="footer-links">
+          <a href="#services">Services</a>
+          <a href="#gallery">Works</a>
+          <a href="#profile">Profile</a>
+          <a href="#contact">Contact</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 the Hayagaki. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/particles.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
