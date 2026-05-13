@@ -527,6 +527,12 @@ body {
   color: var(--glow);
 }
 
+.gallery-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
 .gallery-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
