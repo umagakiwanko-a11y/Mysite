@@ -13,22 +13,34 @@
   <canvas id="particle-canvas"></canvas>
   <div class="light-rays"></div>
 
-  <!-- Swimming shadow (魚影) -->
+  <!-- Swimming shadow (魚影 — 巨大な魚の腹部) -->
   <div class="fish-shadow" aria-hidden="true">
-    <svg class="fish-shadow-svg" viewBox="0 0 1000 300" preserveAspectRatio="xMidYMid meet">
+    <svg class="fish-shadow-svg" viewBox="0 0 1200 500" preserveAspectRatio="xMidYMid slice">
       <defs>
-        <radialGradient id="shadowAura" cx="50%" cy="50%" r="50%">
+        <radialGradient id="bellyGrad" cx="50%" cy="20%" r="70%">
+          <stop offset="0%" stop-color="rgba(0,212,255,0.14)"/>
+          <stop offset="35%" stop-color="rgba(0,212,255,0.10)"/>
+          <stop offset="70%" stop-color="rgba(0,212,255,0.04)"/>
+          <stop offset="100%" stop-color="rgba(0,212,255,0)"/>
+        </radialGradient>
+        <linearGradient id="bellyEdge" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stop-color="rgba(0,212,255,0.12)"/>
           <stop offset="40%" stop-color="rgba(0,212,255,0.06)"/>
           <stop offset="100%" stop-color="rgba(0,212,255,0)"/>
-        </radialGradient>
+        </linearGradient>
       </defs>
-      <ellipse cx="500" cy="150" rx="500" ry="150" fill="url(#shadowAura)"/>
-      <path d="M120,150 C160,140 200,125 260,122 C330,118 370,135 430,130 C490,125 530,110 590,112 C650,114 680,128 740,125 C780,123 810,115 850,118 C875,120 890,128 900,126 L920,125 L920,135 L900,133 C890,135 875,127 850,125 C810,122 780,130 740,132 C680,135 650,121 590,119 C530,117 490,132 430,137 C370,142 330,125 260,129 C200,132 160,147 120,157 Z" fill="rgba(0,212,255,0.12)"/>
-      <path d="M100,144 C105,125 118,112 128,100 C132,95 126,90 122,94 C112,102 100,120 95,138 Z" fill="rgba(0,212,255,0.09)"/>
-      <path d="M108,144 C113,128 122,118 130,108 C132,105 128,102 126,105 C120,112 110,126 106,140 Z" fill="rgba(0,212,255,0.07)"/>
-      <ellipse cx="135" cy="148" rx="4" ry="3" fill="rgba(0,212,255,0.12)"/>
-      <path d="M260,129 C262,120 264,114 262,108 M430,137 C432,128 434,122 432,116 M590,119 C592,110 594,104 592,98 M740,132 C742,123 744,117 742,111" stroke="rgba(0,212,255,0.06)" stroke-width="0.8" fill="none"/>
+      <!-- 巨大な腹部の本体（上が見切れ、下半分が画面に見える） -->
+      <ellipse cx="600" cy="20" rx="520" ry="350" fill="url(#bellyGrad)"/>
+      <!-- 腹の丸みを強調する下部のハイライト -->
+      <ellipse cx="600" cy="60" rx="440" ry="240" fill="rgba(0,212,255,0.04)"/>
+      <!-- 腹の中心線（稜線） -->
+      <path d="M80,120 C200,90 350,70 500,60 C650,50 800,55 950,65 C1050,72 1120,82 1150,90" stroke="rgba(0,212,255,0.10)" stroke-width="1.5" fill="none"/>
+      <!-- 腹のテクスチャ（横線） -->
+      <path d="M120,170 C280,145 450,130 600,125 C750,120 920,130 1080,145" stroke="rgba(0,212,255,0.06)" stroke-width="1" fill="none"/>
+      <path d="M180,220 C340,200 500,190 650,185 C800,180 950,188 1050,200" stroke="rgba(0,212,255,0.04)" stroke-width="0.8" fill="none"/>
+      <path d="M250,268 C400,252 550,245 680,242 C810,239 930,246 1010,255" stroke="rgba(0,212,255,0.025)" stroke-width="0.6" fill="none"/>
+      <!-- 胸びれの端（片方だけ少し見える） -->
+      <path d="M900,130 C930,170 960,220 975,280 C978,295 968,298 962,288 C948,248 925,195 905,150" fill="rgba(0,212,255,0.07)"/>
     </svg>
   </div>
 
