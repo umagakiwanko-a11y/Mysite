@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="60%" y2="100%">
+      <stop offset="0%" stop-color="#a8e6f0"/>
+      <stop offset="50%" stop-color="#5db8d4"/>
+      <stop offset="100%" stop-color="#2a7fa8"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 外周リング -->
+  <circle cx="50" cy="54" r="36" fill="none" stroke="url(#g)" stroke-width="3.5"/>
+
+  <!-- コンパスローズ（8方向の矢） -->
+  <!-- 上 -->
+  <polygon points="50,22 47,32 50,30 53,32" fill="url(#g)"/>
+  <!-- 下 -->
+  <polygon points="50,86 47,76 50,78 53,76" fill="url(#g)"/>
+  <!-- 左 -->
+  <polygon points="14,54 24,51 22,54 24,57" fill="url(#g)"/>
+  <!-- 右 -->
+  <polygon points="86,54 76,51 78,54 76,57" fill="url(#g)"/>
+  <!-- 右上斜め -->
+  <polygon points="75,33 66,40 68,38 65,41" fill="url(#g)" opacity="0.85"/>
+  <!-- 左上斜め -->
+  <polygon points="25,33 34,40 32,38 35,41" fill="url(#g)" opacity="0.85"/>
+  <!-- 右下斜め -->
+  <polygon points="75,75 66,68 68,70 65,67" fill="url(#g)" opacity="0.85"/>
+  <!-- 左下斜め -->
+  <polygon points="25,75 34,68 32,70 35,67" fill="url(#g)" opacity="0.85"/>
+
+  <!-- コンパスの中心放射線 -->
+  <line x1="50" y1="28" x2="50" y2="80" stroke="url(#g)" stroke-width="0.8" opacity="0.4"/>
+  <line x1="20" y1="54" x2="80" y2="54" stroke="url(#g)" stroke-width="0.8" opacity="0.4"/>
+  <line x1="29" y1="33" x2="71" y2="75" stroke="url(#g)" stroke-width="0.8" opacity="0.4"/>
+  <line x1="71" y1="33" x2="29" y2="75" stroke="url(#g)" stroke-width="0.8" opacity="0.4"/>
+
+  <!-- アンカー本体 -->
+  <!-- リング（上部） -->
+  <circle cx="50" cy="14" r="5" fill="none" stroke="url(#g)" stroke-width="3"/>
+  <!-- 縦棒 -->
+  <rect x="47.5" y="14" width="5" height="44" rx="2.5" fill="url(#g)"/>
+  <!-- 横棒 -->
+  <rect x="35" y="25" width="30" height="5" rx="2.5" fill="url(#g)"/>
+  <!-- 錨の下部カーブ（左） -->
+  <path d="M50,58 Q30,64 28,72" fill="none" stroke="url(#g)" stroke-width="5" stroke-linecap="round"/>
+  <!-- 錨の下部カーブ（右） -->
+  <path d="M50,58 Q70,64 72,72" fill="none" stroke="url(#g)" stroke-width="5" stroke-linecap="round"/>
+  <!-- 錨のフック左 -->
+  <path d="M28,72 Q22,76 28,80" fill="none" stroke="url(#g)" stroke-width="4" stroke-linecap="round"/>
+  <!-- 錨のフック右 -->
+  <path d="M72,72 Q78,76 72,80" fill="none" stroke="url(#g)" stroke-width="4" stroke-linecap="round"/>
+</svg>
