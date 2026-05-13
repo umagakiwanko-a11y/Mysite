@@ -13,6 +13,25 @@
   <canvas id="particle-canvas"></canvas>
   <div class="light-rays"></div>
 
+  <!-- Swimming shadow (魚影) -->
+  <div class="fish-shadow" aria-hidden="true">
+    <svg class="fish-shadow-svg" viewBox="0 0 1000 300" preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <radialGradient id="shadowAura" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="rgba(0,0,0,0.35)"/>
+          <stop offset="40%" stop-color="rgba(0,0,0,0.15)"/>
+          <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+        </radialGradient>
+      </defs>
+      <ellipse cx="500" cy="150" rx="500" ry="150" fill="url(#shadowAura)"/>
+      <path d="M120,150 C160,140 200,125 260,122 C330,118 370,135 430,130 C490,125 530,110 590,112 C650,114 680,128 740,125 C780,123 810,115 850,118 C875,120 890,128 900,126 L920,125 L920,135 L900,133 C890,135 875,127 850,125 C810,122 780,130 740,132 C680,135 650,121 590,119 C530,117 490,132 430,137 C370,142 330,125 260,129 C200,132 160,147 120,157 Z" fill="rgba(0,8,20,0.5)"/>
+      <path d="M100,144 C105,125 118,112 128,100 C132,95 126,90 122,94 C112,102 100,120 95,138 Z" fill="rgba(0,8,20,0.35)"/>
+      <path d="M108,144 C113,128 122,118 130,108 C132,105 128,102 126,105 C120,112 110,126 106,140 Z" fill="rgba(0,8,20,0.25)"/>
+      <ellipse cx="135" cy="148" rx="4" ry="3" fill="rgba(0,8,20,0.4)"/>
+      <path d="M260,129 C262,120 264,114 262,108 M430,137 C432,128 434,122 432,116 M590,119 C592,110 594,104 592,98 M740,132 C742,123 744,117 742,111" stroke="rgba(0,8,20,0.12)" stroke-width="0.8" fill="none"/>
+    </svg>
+  </div>
+
   <!-- Oarfish (リュウグウノツカイ) silhouettes -->
   <svg class="oarfish oarfish-hero" viewBox="0 0 800 200" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
     <path d="M0,100 C30,95 50,80 80,78 C120,75 140,90 180,88 C220,86 250,70 300,72 C340,74 360,85 400,82 C440,79 470,65 520,68 C560,71 580,80 620,78 C660,76 690,68 730,72 C755,74 770,80 785,78 L800,77 L800,82 C770,85 755,80 730,78 C690,74 660,82 620,84 C580,86 560,77 520,74 C470,71 440,85 400,88 C360,91 340,80 300,78 C250,76 220,92 180,94 C140,96 120,81 80,84 C50,86 30,101 0,106 Z" fill="currentColor"/>
