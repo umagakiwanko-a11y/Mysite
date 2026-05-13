@@ -83,6 +83,20 @@ body {
   filter: blur(0.5px);
 }
 
+.fish-shadow-crossing {
+  position: fixed;
+  top: 22vh;
+  left: 0;
+  width: 82vw;
+  max-width: 1200px;
+  min-width: 620px;
+  color: rgba(0, 212, 255, 0.08);
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(6px);
+  animation: fishShadowCross 92s linear infinite;
+}
+
 @keyframes oarfishSwim {
   0%   { transform: translateX(0) translateY(0); opacity: 1; }
   25%  { transform: translateX(-6vw) translateY(-12px); opacity: 0.85; }
@@ -98,9 +112,30 @@ body {
   100% { transform: translateX(0) translateY(0) scaleX(-1); opacity: 0.7; }
 }
 
+@keyframes fishShadowCross {
+  0%, 62%, 100% {
+    transform: translateX(118vw) translateY(0) scaleX(-1);
+    opacity: 0;
+  }
+  68% {
+    opacity: 0.03;
+  }
+  76% {
+    opacity: 0.12;
+  }
+  88% {
+    opacity: 0.08;
+  }
+  96% {
+    transform: translateX(-138vw) translateY(7vh) scaleX(-1);
+    opacity: 0;
+  }
+}
+
 @media (max-width: 640px) {
   .oarfish-hero { width: 90vw; bottom: 8%; right: -10%; }
   .oarfish-mid { width: 70vw; top: 50%; left: -15%; }
+  .fish-shadow-crossing { width: 130vw; min-width: 0; top: 18vh; }
 }
 
 /* ---- Light Rays ---- */
