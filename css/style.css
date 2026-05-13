@@ -62,8 +62,8 @@ body {
   position: fixed;
   top: 10%;
   left: 0;
-  width: 60vw;
-  max-width: 800px;
+  width: 80vw;
+  max-width: 1100px;
   z-index: 2;
   pointer-events: none;
   animation: fishShadowSwim 30s linear infinite;
@@ -87,7 +87,7 @@ body {
 }
 
 @media (max-width: 640px) {
-  .fish-shadow { width: 90vw; top: 12%; }
+  .fish-shadow { width: 100vw; top: 10%; }
 }
 
 /* ---- Oarfish (リュウグウノツカイ) ---- */
