@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BtoB Order Form Automation | the Hayagaki</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="topbar">
+    <a href="../../index.html#gallery" class="back-link">Back to Works</a>
+    <a href="../../index.html" class="brand">the Hayagaki</a>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">GAS / BtoB Order Workflow</p>
+        <h1>BtoB発注フォーム<br>自動化システム</h1>
+        <p class="lead">Google Apps Scriptを活用し、取引先からの発注受付、スプレッドシートへの記録、担当者通知までを自動化した業務改善デモです。</p>
+        <div class="notice">守秘義務のため、掲載画面・会社名・商品名・数値は実案件をもとに再構成した架空データです。</div>
+      </div>
+
+      <div class="product-frame" aria-label="発注フォームのデモ画面">
+        <div class="window-bar">
+          <span></span><span></span><span></span>
+          <p>Partner Order Portal</p>
+        </div>
+        <div class="order-panel">
+          <div class="panel-heading">
+            <div>
+              <span class="status-pill">取引先専用</span>
+              <h2>発注フォーム</h2>
+            </div>
+            <strong>No. PO-2026-0514</strong>
+          </div>
+          <div class="form-grid">
+            <label>会社名<input type="text" value="株式会社サンプル商事" readonly></label>
+            <label>担当者<input type="text" value="田中 太郎" readonly></label>
+            <label>納品希望日<input type="text" value="2026/05/21" readonly></label>
+            <label>納品先<input type="text" value="東京第2倉庫" readonly></label>
+          </div>
+          <div class="order-lines">
+            <div class="line header"><span>商品</span><span>数量</span><span>小計</span></div>
+            <div class="line"><span>業務用パッケージ A</span><span>24</span><span>¥96,000</span></div>
+            <div class="line"><span>補充パーツ B</span><span>12</span><span>¥42,000</span></div>
+            <div class="line total"><span>合計</span><span></span><span>¥138,000</span></div>
+          </div>
+          <button class="submit-demo" type="button">発注内容を送信</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="summary">
+      <div class="summary-card">
+        <span>課題</span>
+        <p>メール・電話・手入力で発注内容を管理しており、転記ミスや確認漏れが起きやすい状態でした。</p>
+      </div>
+      <div class="summary-card">
+        <span>対応</span>
+        <p>取引先向けフォーム、スプレッドシート記録、担当者通知、受付番号発行をGASで連携しました。</p>
+      </div>
+      <div class="summary-card">
+        <span>効果</span>
+        <p>発注受付から社内共有までの流れを整理し、確認作業と手入力の負担を軽減しました。</p>
+      </div>
+    </section>
+
+    <section class="workflow">
+      <div class="section-head">
+        <p class="eyebrow">Workflow</p>
+        <h2>受付から記録・通知までを一本化</h2>
+      </div>
+      <div class="flow-grid">
+        <div class="flow-step">
+          <span>01</span>
+          <h3>取引先がフォーム入力</h3>
+          <p>会社名、商品、数量、希望納期、備考を専用フォームから送信。</p>
+        </div>
+        <div class="flow-step">
+          <span>02</span>
+          <h3>GASで内容を検証</h3>
+          <p>必須項目、発注番号、受付日時を整え、処理に必要な形式へ変換。</p>
+        </div>
+        <div class="flow-step">
+          <span>03</span>
+          <h3>Sheetsへ自動記録</h3>
+          <p>発注一覧へ追記し、ステータスや担当者確認欄も自動生成。</p>
+        </div>
+        <div class="flow-step">
+          <span>04</span>
+          <h3>担当者へ通知</h3>
+          <p>受付完了メールと社内通知で、確認漏れを防止。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="screens">
+      <div class="section-head">
+        <p class="eyebrow">Rebuilt Screens</p>
+        <h2>公開用に再構成した画面イメージ</h2>
+      </div>
+      <div class="screen-grid">
+        <article class="sheet-card">
+          <div class="card-label">Google Sheets</div>
+          <h3>発注一覧</h3>
+          <div class="sheet-table">
+            <div class="sheet-row head"><span>受付ID</span><span>会社名</span><span>金額</span><span>状態</span></div>
+            <div class="sheet-row"><span>PO-0514</span><span>サンプル商事</span><span>¥138,000</span><span class="tag blue">確認中</span></div>
+            <div class="sheet-row"><span>PO-0513</span><span>青葉物流</span><span>¥84,500</span><span class="tag green">処理済</span></div>
+            <div class="sheet-row"><span>PO-0512</span><span>東都フーズ</span><span>¥221,000</span><span class="tag amber">要確認</span></div>
+          </div>
+        </article>
+        <article class="mail-card">
+          <div class="card-label">Notification</div>
+          <h3>担当者通知</h3>
+          <div class="mail-box">
+            <p class="mail-title">新しい発注を受け付けました</p>
+            <p>受付ID: PO-2026-0514</p>
+            <p>会社名: 株式会社サンプル商事</p>
+            <p>合計金額: ¥138,000</p>
+            <div class="mail-action">発注一覧を確認</div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="tech">
+      <div class="section-head">
+        <p class="eyebrow">Stack</p>
+        <h2>使用技術</h2>
+      </div>
+      <div class="tech-list">
+        <span>Google Apps Script</span>
+        <span>Google Sheets</span>
+        <span>HTML</span>
+        <span>CSS</span>
+        <span>JavaScript</span>
+        <span>Mail Notification</span>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>Demo work by <a href="../../index.html">the Hayagaki</a></p>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
