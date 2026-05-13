@@ -296,7 +296,6 @@ body {
 .hero-title {
   font-family: var(--font-en);
   margin-bottom: 1.5rem;
-  animation: fadeInUp 1s ease 0.4s both;
 }
 
 .title-line {
@@ -312,10 +311,19 @@ body {
   font-weight: 700;
   color: var(--white);
   letter-spacing: 0.02em;
-  background: linear-gradient(135deg, var(--white) 0%, var(--glow) 100%);
+  background: linear-gradient(
+    90deg,
+    var(--white) 0%,
+    var(--glow) 25%,
+    var(--white) 50%,
+    var(--biolum) 75%,
+    var(--white) 100%
+  );
+  background-size: 300% 100%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  animation: fadeInUp 1s ease 0.4s both, titleWave 8s ease-in-out infinite 1.5s;
   filter: drop-shadow(0 0 40px rgba(0, 212, 255, 0.15));
 }
 
@@ -838,6 +846,12 @@ body {
 @keyframes scrollPulse {
   0%, 100% { opacity: 0.3; transform: scaleY(1); }
   50% { opacity: 1; transform: scaleY(1.2); }
+}
+
+@keyframes titleWave {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 /* ---- Responsive ---- */
