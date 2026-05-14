@@ -553,6 +553,123 @@ body {
   color: var(--text-muted);
 }
 
+/* ---- Flow ---- */
+.flow {
+  position: relative;
+  z-index: 1;
+  padding: 8rem 0;
+  background: linear-gradient(180deg, transparent, rgba(0, 212, 255, 0.015), transparent);
+}
+
+.flow-steps {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+}
+
+.flow-step {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0 1rem;
+}
+
+.flow-illust {
+  width: 100px;
+  height: 100px;
+  color: var(--glow);
+  margin-bottom: 1.2rem;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flow-illust::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0,212,255,0.07) 0%, transparent 70%);
+}
+
+.flow-illust svg {
+  width: 80px;
+  height: 80px;
+  filter: drop-shadow(0 0 8px rgba(0, 212, 255, 0.2));
+  transition: filter 0.3s, transform 0.3s;
+}
+
+.flow-step:hover .flow-illust svg {
+  filter: drop-shadow(0 0 16px rgba(0, 212, 255, 0.4));
+  transform: translateY(-4px);
+}
+
+.flow-num {
+  font-family: var(--font-en);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  color: var(--glow);
+  background: var(--glow-soft);
+  border: 1px solid rgba(0, 212, 255, 0.15);
+  padding: 0.25rem 0.8rem;
+  border-radius: 50px;
+  margin-bottom: 0.8rem;
+}
+
+.flow-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--white);
+  margin-bottom: 0.6rem;
+}
+
+.flow-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+}
+
+.flow-arrow {
+  flex-shrink: 0;
+  width: 48px;
+  color: var(--glow);
+  opacity: 0.3;
+  padding-top: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flow-arrow svg {
+  width: 40px;
+  height: 20px;
+}
+
+@media (max-width: 900px) {
+  .flow-steps {
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  .flow-step {
+    width: 100%;
+    max-width: 360px;
+    padding: 1.5rem 1rem;
+  }
+
+  .flow-arrow {
+    padding-top: 0;
+    transform: rotate(90deg);
+    width: auto;
+    height: 36px;
+  }
+}
+
 /* ---- Gallery ---- */
 .gallery {
   position: relative;
