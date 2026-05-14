@@ -1612,3 +1612,143 @@ body {
     padding: 5rem 0;
   }
 }
+
+/* ---- Custom Cursor ---- */
+.cursor-active * { cursor: none !important; }
+.cursor-dot {
+  position: fixed; top: -3px; left: -3px;
+  width: 6px; height: 6px;
+  background: var(--glow); border-radius: 50%;
+  pointer-events: none; z-index: 9999;
+  box-shadow: 0 0 10px rgba(0,212,255,0.9);
+  will-change: transform;
+}
+.cursor-ring {
+  position: fixed; top: -16px; left: -16px;
+  width: 32px; height: 32px;
+  border: 1.5px solid rgba(0,212,255,0.4); border-radius: 50%;
+  pointer-events: none; z-index: 9998;
+  transition: width 0.25s, height 0.25s, top 0.25s, left 0.25s, border-color 0.25s;
+  will-change: transform;
+}
+.cursor-ring--hover {
+  top: -22px; left: -22px;
+  width: 44px; height: 44px;
+  border-color: rgba(0,212,255,0.75);
+  background: rgba(0,212,255,0.04);
+}
+.cursor-trail {
+  position: fixed; top: -2px; left: -2px;
+  width: 4px; height: 4px;
+  background: rgba(0,212,255,0.55); border-radius: 50%;
+  pointer-events: none; z-index: 9997;
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  will-change: transform, opacity;
+}
+
+/* ---- Diagnosis ---- */
+.diagnosis { position: relative; z-index: 1; padding: 8rem 0; }
+.diagnosis-wrapper { max-width: 680px; margin: 0 auto; }
+.diag-progress-track {
+  height: 2px; background: rgba(0,212,255,0.1); border-radius: 2px; margin-bottom: 2.5rem; overflow: hidden;
+}
+.diag-progress-bar {
+  height: 100%; width: 0%; background: linear-gradient(90deg, var(--glow), var(--biolum));
+  border-radius: 2px; transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
+}
+.diagnosis-steps { position: relative; min-height: 260px; }
+.diag-step {
+  display: none; flex-direction: column; gap: 1.5rem;
+  animation: fadeInUp 0.4s ease both;
+}
+.diag-step.active { display: flex; }
+.diag-step-label {
+  font-family: var(--font-en); font-size: 0.75rem; font-weight: 600;
+  letter-spacing: 0.15em; color: var(--glow);
+}
+.diag-question {
+  font-size: 1.3rem; font-weight: 700; color: var(--white); line-height: 1.5;
+}
+.diag-options { display: flex; flex-direction: column; gap: 0.75rem; }
+.diag-option {
+  text-align: left; padding: 1rem 1.4rem;
+  border: 1px solid rgba(0,212,255,0.1); border-radius: 10px;
+  background: rgba(15,32,53,0.6); color: var(--text-secondary);
+  font-family: var(--font-jp); font-size: 0.95rem;
+  cursor: pointer; transition: all 0.25s;
+}
+.diag-option:hover, .diag-option.selected {
+  border-color: var(--glow); background: rgba(0,212,255,0.07); color: var(--white);
+  transform: translateX(4px);
+}
+.diag-result {
+  text-align: center; padding: 2rem;
+  border: 1px solid rgba(0,255,204,0.2); border-radius: 14px;
+  background: linear-gradient(135deg, rgba(0,255,204,0.05), rgba(0,212,255,0.03));
+  animation: fadeInUp 0.5s ease both;
+}
+.diag-result-icon { font-size: 2.5rem; margin-bottom: 0.8rem; }
+.diag-result-label {
+  font-family: var(--font-en); font-size: 0.72rem; font-weight: 600;
+  letter-spacing: 0.12em; color: var(--biolum); margin-bottom: 0.5rem;
+}
+.diag-result-title { font-size: 1.4rem; font-weight: 700; color: var(--white); margin-bottom: 0.8rem; }
+.diag-result-desc { font-size: 0.9rem; color: var(--text-secondary); line-height: 2; margin-bottom: 0.8rem; }
+.diag-result-price {
+  display: inline-block; font-family: var(--font-en); font-size: 1.1rem; font-weight: 600;
+  color: var(--glow); margin-bottom: 0.5rem;
+}
+.diag-retry {
+  margin-top: 1.5rem; background: none; border: 1px solid rgba(0,212,255,0.2);
+  color: var(--text-muted); font-family: var(--font-jp); font-size: 0.85rem;
+  padding: 0.6rem 1.5rem; border-radius: 50px; cursor: pointer; transition: all 0.3s; display: block; margin-inline: auto;
+}
+.diag-retry:hover { border-color: var(--glow); color: var(--glow); }
+
+/* ---- Simulator ---- */
+.simulator { position: relative; z-index: 1; padding: 8rem 0; background: linear-gradient(180deg,transparent,rgba(0,212,255,0.01),transparent); }
+.simulator-wrapper {
+  display: grid; grid-template-columns: 1fr 340px; gap: 3rem; align-items: start;
+}
+.sim-label { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 0.8rem; }
+.sim-services { display: flex; flex-direction: column; gap: 0.6rem; }
+.sim-service-btn {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0.9rem 1.2rem; border: 1px solid rgba(0,212,255,0.1); border-radius: 8px;
+  background: rgba(15,32,53,0.6); color: var(--text-secondary);
+  font-family: var(--font-jp); font-size: 0.9rem; cursor: pointer; transition: all 0.25s; text-align: left;
+}
+.sim-service-btn span { font-family: var(--font-en); font-size: 0.82rem; color: var(--text-muted); }
+.sim-service-btn:hover { border-color: rgba(0,212,255,0.3); color: var(--white); }
+.sim-service-btn.active { border-color: var(--glow); background: rgba(0,212,255,0.08); color: var(--white); }
+.sim-service-btn.active span { color: var(--glow); }
+.sim-options { display: flex; flex-direction: column; gap: 0.6rem; }
+.sim-option-label {
+  display: flex; align-items: center; gap: 0.8rem;
+  padding: 0.7rem 1rem; border: 1px solid rgba(0,212,255,0.07); border-radius: 8px;
+  background: rgba(15,32,53,0.4); cursor: pointer; transition: border-color 0.25s;
+  font-size: 0.88rem; color: var(--text-secondary);
+}
+.sim-option-label:hover { border-color: rgba(0,212,255,0.2); }
+.sim-option-label input { accent-color: var(--glow); width: 15px; height: 15px; flex-shrink: 0; }
+.sim-option-label em { font-style: normal; color: var(--glow); font-size: 0.8rem; margin-left: 0.5rem; }
+.sim-right {
+  position: sticky; top: 100px;
+  background: linear-gradient(135deg, rgba(15,32,53,0.9), rgba(10,22,40,0.8));
+  border: 1px solid rgba(0,212,255,0.12); border-radius: 14px; padding: 2rem;
+}
+.sim-total-label { font-family: var(--font-en); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.15em; color: var(--text-muted); margin-bottom: 0.4rem; }
+.sim-total { font-family: var(--font-en); font-size: 2.2rem; font-weight: 700; color: var(--glow); min-height: 2.8rem; }
+.sim-note { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.3rem; margin-bottom: 1.2rem; }
+.sim-breakdown { display: flex; flex-direction: column; gap: 0.5rem; min-height: 60px; }
+.sim-breakdown-row { display: flex; justify-content: space-between; font-size: 0.83rem; color: var(--text-secondary); padding: 0.4rem 0; border-bottom: 1px solid rgba(0,212,255,0.06); }
+.sim-breakdown-option { color: var(--text-muted); font-size: 0.8rem; }
+.sim-hint { font-size: 0.83rem; color: var(--text-muted); text-align: center; padding: 1rem 0; }
+@media (max-width: 768px) {
+  .simulator-wrapper { grid-template-columns: 1fr; }
+  .sim-right { position: static; }
+}
+
+/* ---- Skill Map ---- */
+.skillmap-wrap { width: 100%; margin-bottom: 1.2rem; border-radius: 10px; overflow: hidden; border: 1px solid rgba(0,212,255,0.07); background: rgba(10,22,40,0.4); }
+#skillmap-canvas { display: block; }
