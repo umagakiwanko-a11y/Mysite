@@ -283,13 +283,22 @@ body {
   filter: drop-shadow(0 0 40px rgba(0, 212, 255, 0.15));
 }
 
+.hero-catch {
+  font-size: clamp(1.3rem, 3vw, 1.8rem);
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: 0.04em;
+  margin-bottom: 0.8rem;
+  animation: fadeInUp 1s ease 0.55s both;
+}
+
 .hero-subtitle {
-  font-size: 1.05rem;
+  font-size: 1.0rem;
   color: var(--text-secondary);
   font-weight: 300;
-  line-height: 1.8;
+  line-height: 2;
   margin-bottom: 2.5rem;
-  animation: fadeInUp 1s ease 0.6s both;
+  animation: fadeInUp 1s ease 0.7s both;
 }
 
 .hero-cta {
