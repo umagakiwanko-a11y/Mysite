@@ -477,7 +477,7 @@
       </div>
       <div class="simulator-wrapper reveal">
         <div class="sim-left">
-          <p class="sim-label">サービスを選ぶ（複数可）</p>
+          <div class="sim-section-label">サービスを選ぶ（複数可）</div>
           <div class="sim-services">
             <button class="sim-service-btn" data-service="lp">LP制作<span>¥60,000〜</span></button>
             <button class="sim-service-btn" data-service="web">Webサイト制作<span>¥100,000〜</span></button>
@@ -485,7 +485,8 @@
             <button class="sim-service-btn" data-service="system">システム開発<span>¥100,000〜</span></button>
             <button class="sim-service-btn" data-service="manual">マニュアル制作<span>¥30,000〜</span></button>
           </div>
-          <p class="sim-label" style="margin-top:1.5rem">オプション</p>
+          <div class="sim-divider"></div>
+          <div class="sim-section-label">オプション</div>
           <div class="sim-options">
             <label class="sim-option-label"><input type="checkbox" class="sim-option-check" data-option="rush"><span>急ぎ対応（2週間以内）<em>+¥20,000</em></span></label>
             <label class="sim-option-label"><input type="checkbox" class="sim-option-check" data-option="support"><span>月額保守サポート<em>+¥12,000/月</em></span></label>
@@ -493,11 +494,16 @@
           </div>
         </div>
         <div class="sim-right">
-          <p class="sim-total-label">概算目安</p>
-          <p class="sim-total" id="simTotal">---</p>
-          <p class="sim-note">※税抜・目安金額です</p>
-          <div class="sim-breakdown" id="simBreakdown"><p class="sim-hint">サービスを選んでください</p></div>
-          <a href="#contact" class="btn btn-primary btn-full" style="margin-top:1.5rem">この内容で相談する</a>
+          <div class="sim-sonar-display">
+            <p class="sim-total-label">DEPTH ESTIMATE</p>
+            <p class="sim-total" id="simTotal">---</p>
+            <p class="sim-note">※税抜・目安金額です</p>
+            <div class="sim-sonar-glow" aria-hidden="true"></div>
+          </div>
+          <div class="sim-breakdown-wrapper">
+            <div class="sim-breakdown" id="simBreakdown"><p class="sim-hint">サービスを選んでください</p></div>
+          </div>
+          <a href="#contact" class="btn btn-primary btn-full sim-cta">この内容で相談する</a>
         </div>
       </div>
     </div>
