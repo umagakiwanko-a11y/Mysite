@@ -161,12 +161,13 @@
 
     // ---- State ----
     let state = 'menu';
-    let depth, speed, frame, shakeAmt;
+    let depth = 0, speed = 2.2, frame = 0, shakeAmt = 0;
     let best = +localStorage.getItem('fathom_deep') || 0;
     bestEl.textContent = best + 'm';
 
-    const diver = { x:0, y:0, vx:0 };
-    let obstacles, orbs, bubbles, particles, lastMilestone;
+    const diver = { x: 0, y: 0, vx: 0 };
+    let obstacles = [], orbs = [], bubbles = [], particles = [];
+    let lastMilestone = 0;
 
     // ---- Input ----
     const keys = {};
@@ -561,26 +562,30 @@
 
     // ---- Main loop ----
     function loop() {
-      update();
+      try {
+        update();
 
-      // Screen shake
-      ctx.save();
-      if (shakeAmt > 0.5) {
-        ctx.translate(
-          (Math.random() - 0.5) * shakeAmt,
-          (Math.random() - 0.5) * shakeAmt
-        );
+        // Screen shake
+        ctx.save();
+        if (shakeAmt > 0.5) {
+          ctx.translate(
+            (Math.random() - 0.5) * shakeAmt,
+            (Math.random() - 0.5) * shakeAmt
+          );
+        }
+
+        drawBg();
+        drawBubbles();
+        orbs.forEach(drawOrb);
+        obstacles.forEach(o => o.type === 'jelly' ? drawJellyfish(o) : drawRock(o));
+        drawParticles();
+        if (state === 'playing') drawDiver();
+        drawDepthMeter();
+
+        ctx.restore();
+      } catch(e) {
+        console.error('LOOP ERROR:', e.message, e.stack);
       }
-
-      drawBg();
-      drawBubbles();
-      orbs.forEach(drawOrb);
-      obstacles.forEach(o => o.type === 'jelly' ? drawJellyfish(o) : drawRock(o));
-      drawParticles();
-      if (state === 'playing') drawDiver();
-      drawDepthMeter();
-
-      ctx.restore();
       requestAnimationFrame(loop);
     }
 
