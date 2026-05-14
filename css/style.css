@@ -1117,6 +1117,20 @@ body {
   margin-bottom: 0.5rem;
 }
 
+.profile-title-badge {
+  display: inline-block;
+  font-family: var(--font-en);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--biolum);
+  background: rgba(0, 255, 204, 0.08);
+  border: 1px solid rgba(0, 255, 204, 0.25);
+  padding: 0.3rem 1rem;
+  border-radius: 50px;
+  margin-bottom: 0.6rem;
+}
+
 .profile-location {
   font-size: 0.82rem;
   color: var(--text-muted);
@@ -1233,6 +1247,20 @@ body {
 .form-group textarea {
   resize: vertical;
   min-height: 140px;
+}
+
+/* ---- AI badge on service cards ---- */
+.ai-badge {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--biolum);
+  background: rgba(0, 255, 204, 0.07);
+  border: 1px solid rgba(0, 255, 204, 0.2);
+  padding: 0.18rem 0.7rem;
+  border-radius: 50px;
+  margin-bottom: 0.7rem;
 }
 
 /* ---- Contact form extras ---- */
