@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>OGP Image Maker — the Fathom</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;700&display=swap" rel="stylesheet">
+  <style>
+    body { margin: 0; background: #111; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; gap: 1.5rem; font-family: sans-serif; }
+    canvas { border: 1px solid rgba(0,212,255,0.2); display: block; max-width: 100%; }
+    button { padding: 0.8rem 2rem; background: linear-gradient(135deg, #2980b9, #00d4ff); color: #020817; border: none; border-radius: 6px; font-size: 1rem; font-weight: 700; cursor: pointer; }
+    p { color: #8bafc4; font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+  <canvas id="c" width="1200" height="630"></canvas>
+  <button onclick="download()">ogp.png をダウンロード</button>
+  <p>ダウンロードしたファイルを「ogp.png」という名前でMysiteフォルダのルートに置いてください。</p>
+
+  <script>
+    const canvas = document.getElementById('c');
+    const ctx = canvas.getContext('2d');
+    const W = 1200, H = 630;
+
+    function draw() {
+      // 背景
+      ctx.fillStyle = '#020817';
+      ctx.fillRect(0, 0, W, H);
+
+      // グロー（中央）
+      const glow = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, 420);
+      glow.addColorStop(0, 'rgba(0, 212, 255, 0.07)');
+      glow.addColorStop(1, 'rgba(0, 212, 255, 0)');
+      ctx.fillStyle = glow;
+      ctx.fillRect(0, 0, W, H);
+
+      // グロー（上部）
+      const topGlow = ctx.createRadialGradient(W/2, 0, 0, W/2, 0, 360);
+      topGlow.addColorStop(0, 'rgba(0, 212, 255, 0.04)');
+      topGlow.addColorStop(1, 'rgba(0, 212, 255, 0)');
+      ctx.fillStyle = topGlow;
+      ctx.fillRect(0, 0, W, H);
+
+      // パーティクル風の点
+      ctx.fillStyle = 'rgba(0, 212, 255, 0.25)';
+      const dots = [[120,80],[980,120],[60,500],[1140,420],[200,560],[1050,55],[350,40],[850,580]];
+      dots.forEach(([x, y]) => {
+        ctx.beginPath(); ctx.arc(x, y, 2, 0, Math.PI*2); ctx.fill();
+      });
+      ctx.fillStyle = 'rgba(0, 212, 255, 0.12)';
+      const dots2 = [[300,160],[900,200],[150,380],[1080,300],[500,580],[700,30],[80,280],[1160,540]];
+      dots2.forEach(([x, y]) => {
+        ctx.beginPath(); ctx.arc(x, y, 1.5, 0, Math.PI*2); ctx.fill();
+      });
+
+      // 区切り線（上）
+      ctx.strokeStyle = 'rgba(0, 212, 255, 0.08)';
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(80, 120); ctx.lineTo(1120, 120); ctx.stroke();
+
+      // 区切り線（下）
+      ctx.beginPath(); ctx.moveTo(80, 510); ctx.lineTo(1120, 510); ctx.stroke();
+
+      // ラベル "PORTFOLIO"
+      ctx.fillStyle = 'rgba(0, 212, 255, 0.6)';
+      ctx.font = '500 18px Outfit, sans-serif';
+      ctx.letterSpacing = '0.2em';
+      ctx.textAlign = 'center';
+      ctx.fillText('PORTFOLIO', W/2, 100);
+
+      // "the"
+      ctx.fillStyle = 'rgba(139, 175, 196, 0.75)';
+      ctx.font = '300 52px Outfit, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('the', W/2, 260);
+
+      // "Fathom" グロー
+      ctx.shadowColor = 'rgba(0, 212, 255, 0.4)';
+      ctx.shadowBlur = 40;
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '700 140px Outfit, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('Fathom', W/2, 400);
+      ctx.shadowBlur = 0;
+
+      // キャッチコピー
+      ctx.fillStyle = 'rgba(139, 175, 196, 0.8)';
+      ctx.font = '300 28px "Noto Sans JP", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('深く潜るほど、見えてくる。', W/2, 475);
+
+      // URL
+      ctx.fillStyle = 'rgba(0, 212, 255, 0.4)';
+      ctx.font = '300 20px Outfit, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('umagakiwanko-a11y.github.io/Mysite', W/2, 548);
+    }
+
+    // フォント読み込み後に描画
+    document.fonts.ready.then(() => { draw(); });
+
+    function download() {
+      draw();
+      const a = document.createElement('a');
+      a.download = 'ogp.png';
+      a.href = canvas.toDataURL('image/png');
+      a.click();
+    }
+  </script>
+</body>
+</html>
