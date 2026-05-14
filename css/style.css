@@ -587,8 +587,8 @@ body {
 }
 
 .flow-illust {
-  width: 32px;
-  height: 32px;
+  width: 48px;
+  height: 48px;
   color: var(--glow);
   margin-bottom: 1.2rem;
   position: relative;
@@ -606,8 +606,8 @@ body {
 }
 
 .flow-illust svg {
-  width: 26px;
-  height: 26px;
+  width: 48px;
+  height: 48px;
   filter: drop-shadow(0 0 8px rgba(0, 212, 255, 0.2));
   transition: filter 0.3s, transform 0.3s;
 }
