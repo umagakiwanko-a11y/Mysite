@@ -301,6 +301,16 @@ body {
   animation: fadeInUp 1s ease 0.7s both;
 }
 
+.hero-definition {
+  display: block;
+  font-size: 0.78rem;
+  font-family: var(--font-en);
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  margin-bottom: 0.6rem;
+  opacity: 0.85;
+}
+
 .hero-cta {
   display: flex;
   gap: 1rem;
