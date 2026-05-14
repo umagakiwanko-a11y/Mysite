@@ -86,27 +86,67 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // ---- Contact form (basic) ----
+  // ---- Contact form (Formspree AJAX) ----
   const form = document.getElementById('contactForm');
   if (form) {
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const btn = form.querySelector('button[type="submit"]');
-      const originalText = btn.textContent;
+
+      const btn = document.getElementById('submitBtn');
+      const msg = document.getElementById('formMessage');
+
+      // バリデーション
+      const required = form.querySelectorAll('[required]');
+      let valid = true;
+      required.forEach(el => {
+        el.classList.remove('input-error');
+        if (!el.value.trim()) {
+          el.classList.add('input-error');
+          valid = false;
+        }
+      });
+      if (!valid) {
+        msg.className = 'form-message error visible';
+        msg.textContent = '必須項目を入力してください。';
+        return;
+      }
+
+      // 送信中
       btn.textContent = '送信中...';
       btn.disabled = true;
+      btn.classList.add('sending');
+      msg.className = 'form-message';
+      msg.textContent = '';
 
-      setTimeout(() => {
-        btn.textContent = '送信しました';
-        btn.style.background = 'linear-gradient(135deg, #00ffcc, #00d4ff)';
-        form.reset();
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { 'Accept': 'application/json' }
+        });
 
-        setTimeout(() => {
-          btn.textContent = originalText;
-          btn.style.background = '';
-          btn.disabled = false;
-        }, 3000);
-      }, 1000);
+        if (res.ok) {
+          // 成功
+          form.reset();
+          form.style.display = 'none';
+          msg.className = 'form-message success visible';
+          msg.innerHTML = `
+            <div class="form-success-icon">✓</div>
+            <p class="form-success-title">送信が完了しました！</p>
+            <p class="form-success-sub">お問い合わせいただきありがとうございます。<br>近日中にご連絡いたします。</p>
+          `;
+        } else {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(data.error || 'server error');
+        }
+      } catch {
+        // エラー
+        msg.className = 'form-message error visible';
+        msg.textContent = '送信に失敗しました。時間をおいて再度お試しください。';
+        btn.textContent = '送信する';
+        btn.disabled = false;
+        btn.classList.remove('sending');
+      }
     });
   }
 
