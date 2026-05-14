@@ -821,6 +821,115 @@ body {
   }
 }
 
+/* ---- FAQ ---- */
+.faq {
+  position: relative;
+  z-index: 1;
+  padding: 8rem 0;
+}
+
+.faq-list {
+  max-width: 760px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.faq-item {
+  border: 1px solid rgba(0, 212, 255, 0.08);
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(15, 32, 53, 0.7), rgba(10, 22, 40, 0.5));
+  overflow: hidden;
+  transition: border-color 0.3s;
+}
+
+.faq-item:has(.faq-question[aria-expanded="true"]) {
+  border-color: rgba(0, 212, 255, 0.18);
+}
+
+.faq-question {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.4rem 1.8rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  color: var(--white);
+  font-family: var(--font-jp);
+  font-size: 0.97rem;
+  font-weight: 500;
+  line-height: 1.6;
+  transition: color 0.3s;
+}
+
+.faq-question:hover {
+  color: var(--glow);
+}
+
+.faq-icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 212, 255, 0.25);
+  position: relative;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.faq-icon::before,
+.faq-icon::after {
+  content: '';
+  position: absolute;
+  background: var(--glow);
+  border-radius: 2px;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.faq-icon::before {
+  width: 8px; height: 1.5px;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.faq-icon::after {
+  width: 1.5px; height: 8px;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.faq-question[aria-expanded="true"] .faq-icon {
+  background: rgba(0, 212, 255, 0.1);
+  border-color: var(--glow);
+}
+
+.faq-question[aria-expanded="true"] .faq-icon::after {
+  transform: translate(-50%, -50%) rotate(90deg);
+  opacity: 0;
+}
+
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.faq-answer p {
+  padding: 0 1.8rem 1.6rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 2;
+}
+
+.faq-answer strong {
+  color: var(--glow);
+  font-weight: 600;
+}
+
 /* ---- Gallery ---- */
 .gallery {
   position: relative;

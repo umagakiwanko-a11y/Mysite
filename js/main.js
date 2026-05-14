@@ -86,6 +86,24 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // ---- FAQ accordion ----
+  document.querySelectorAll('.faq-question').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const isOpen = btn.getAttribute('aria-expanded') === 'true';
+      // 他を閉じる
+      document.querySelectorAll('.faq-question').forEach(b => {
+        b.setAttribute('aria-expanded', 'false');
+        b.nextElementSibling.style.maxHeight = null;
+      });
+      // クリックしたものを開閉
+      if (!isOpen) {
+        btn.setAttribute('aria-expanded', 'true');
+        const answer = btn.nextElementSibling;
+        answer.style.maxHeight = answer.scrollHeight + 'px';
+      }
+    });
+  });
+
   // ---- Contact form (Formspree AJAX) ----
   const form = document.getElementById('contactForm');
   if (form) {
