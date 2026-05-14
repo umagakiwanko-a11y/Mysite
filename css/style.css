@@ -1117,6 +1117,13 @@ body {
   margin-bottom: 0.5rem;
 }
 
+.profile-location {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-bottom: 1.2rem;
+  letter-spacing: 0.04em;
+}
+
 .profile-name {
   font-family: var(--font-en);
   font-size: clamp(1.5rem, 3vw, 2rem);
@@ -1128,6 +1135,11 @@ body {
 
 .profile-text {
   margin-bottom: 2rem;
+}
+
+.profile-text strong {
+  color: var(--glow);
+  font-weight: 600;
 }
 
 .profile-text p {
