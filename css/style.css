@@ -378,6 +378,89 @@ body {
   margin: 0 auto;
 }
 
+/* ---- Philosophy ---- */
+.philosophy {
+  position: relative;
+  z-index: 1;
+  padding: 4rem 0;
+}
+
+.philosophy-card {
+  border: 1px solid rgba(0, 212, 255, 0.1);
+  border-radius: 16px;
+  padding: 3rem 3.5rem;
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.04), rgba(0, 255, 204, 0.02));
+  position: relative;
+  overflow: hidden;
+}
+
+.philosophy-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--glow), var(--biolum), transparent);
+  opacity: 0.5;
+}
+
+.philosophy-quote {
+  font-family: var(--font-jp);
+  font-size: clamp(1.3rem, 3vw, 1.9rem);
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.5;
+  margin-bottom: 1.4rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+}
+
+.philosophy-mark {
+  font-family: var(--font-en);
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--glow);
+  opacity: 0.4;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.philosophy-body {
+  font-size: 0.93rem;
+  color: var(--text-secondary);
+  line-height: 2;
+  max-width: 720px;
+  margin-bottom: 1.8rem;
+}
+
+.philosophy-body strong {
+  color: var(--glow);
+  font-weight: 600;
+}
+
+.philosophy-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.philosophy-tags span {
+  font-family: var(--font-en);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  border: 1px solid rgba(0, 212, 255, 0.1);
+  padding: 0.3rem 0.9rem;
+  border-radius: 50px;
+}
+
+@media (max-width: 640px) {
+  .philosophy-card {
+    padding: 2rem 1.5rem;
+  }
+}
+
 /* ---- Services ---- */
 .services {
   position: relative;
