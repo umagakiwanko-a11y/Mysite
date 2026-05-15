@@ -437,6 +437,7 @@
     const diver = { x: 0, y: 0, vx: 0 };
     let obstacles = [], orbs = [], bubbles = [], particles = [];
     let collectibles = [], notifications = [];
+    let wallRocks = [], giantFaces = [];
     let sessionCollected = [], lastMilestone = 0;
 
     // Input
@@ -476,6 +477,7 @@
       diver.x = W / 2; diver.y = H * 0.28; diver.vx = 0;
       obstacles = []; orbs = []; bubbles = []; particles = [];
       collectibles = []; notifications = [];
+      wallRocks = []; giantFaces = [];
       sessionCollected = []; lastMilestone = 0;
       overlay.classList.add('hidden');
     }
@@ -536,6 +538,37 @@
         y: H * (0.18 + Math.random() * 0.64),
         vx, t: Math.random() * Math.PI * 2,
       });
+    }
+
+    function lerp(a, b, t) { return a + (b - a) * t; }
+
+    function spawnWallRock() {
+      const factor  = Math.min(1, depth / 600);
+      const protrude = 28 + Math.random() * 24 + factor * Math.min(W * 0.30, 115);
+      const side = Math.random() < 0.5 ? 'left' : 'right';
+      const h    = 60 + Math.random() * 130;
+      wallRocks.push({ side, y: H + h / 2, protrude, h, phase: Math.random() * Math.PI * 2 });
+    }
+
+    function spawnGiantFace() {
+      if (giantFaces.length > 0) return;
+      const pool = depth < 500 ? ['angler']
+                 : depth < 900 ? ['angler', 'fang']
+                 :               ['angler', 'fang', 'eyeball'];
+      const type = pool[Math.floor(Math.random() * pool.length)];
+      const side = Math.random() < 0.5 ? 'left' : 'right';
+      const size = 88 + Math.random() * 58;
+      const fy   = diver.y + (Math.random() - 0.5) * H * 0.22;
+      giantFaces.push({
+        side, type, size,
+        x: side === 'left' ? -size * 2 : W + size * 2,
+        y: fy,
+        enterX: side === 'left' ? size * 0.46 : W - size * 0.46,
+        state: 'entering', timer: 0,
+        holdTime: 88 + Math.floor(Math.random() * 55),
+        mouthAngle: 0,
+      });
+      addNotif('⚠ なにかいる…', '#ff4466');
     }
 
     // ============================================================
@@ -703,6 +736,28 @@
       collectibles.forEach(c => { c.x += c.vx; c.t += 0.045; c.y += Math.sin(c.t) * 0.6; });
       bubbles.forEach(b => { b.x += b.vx; b.y += b.vy; });
       particles.forEach(p => { p.x += p.vx; p.y += p.vy; p.vx *= 0.94; p.vy *= 0.94; p.life -= p.decay; });
+      wallRocks.forEach(wr => { wr.y -= dy; });
+
+      // Giant face animate
+      for (let i = 0; i < giantFaces.length; i++) {
+        const gf = giantFaces[i];
+        gf.timer++;
+        if (gf.state === 'entering') {
+          gf.x = lerp(gf.x, gf.enterX, 0.07);
+          gf.mouthAngle = Math.min(0.65, gf.mouthAngle + 0.032);
+          if (Math.abs(gf.x - gf.enterX) < 4) { gf.state = 'hold'; gf.timer = 0; }
+        } else if (gf.state === 'hold') {
+          gf.mouthAngle = 0.58 + Math.sin(gf.timer * 0.1) * 0.1;
+          if (gf.timer > gf.holdTime) gf.state = 'leaving';
+          const reach = gf.size * 0.5;
+          if (gf.side === 'left'  && diver.x < reach     && Math.abs(diver.y - gf.y) < gf.size * 0.44) { die(); return; }
+          if (gf.side === 'right' && diver.x > W - reach && Math.abs(diver.y - gf.y) < gf.size * 0.44) { die(); return; }
+        } else {
+          const offX = gf.side === 'left' ? -gf.size * 2 : W + gf.size * 2;
+          gf.x = lerp(gf.x, offX, 0.09);
+          gf.mouthAngle = Math.max(0, gf.mouthAngle - 0.04);
+        }
+      }
 
       // Prune
       obstacles = obstacles.filter(o => o.y > -80);
@@ -710,6 +765,12 @@
       collectibles = collectibles.filter(c => c.x > -120 && c.x < W + 120);
       bubbles = bubbles.filter(b => b.y > -20);
       particles = particles.filter(p => p.life > 0);
+      wallRocks = wallRocks.filter(wr => wr.y > -wr.h);
+      giantFaces = giantFaces.filter(gf => {
+        if (gf.state !== 'leaving') return true;
+        const offX = gf.side === 'left' ? -gf.size * 2 : W + gf.size * 2;
+        return Math.abs(gf.x - offX) > 14;
+      });
 
       // Spawn
       const obsRate = Math.max(40, 110 - depth * 0.25);
@@ -718,6 +779,17 @@
       if (frame % 5 === 0) spawnBubble();
       const colRate = Math.max(280, 520 - depth * 0.15);
       if (frame % Math.round(colRate) === 0) spawnCollectible();
+      const rockRate = Math.max(52, 290 - depth * 0.22);
+      if (depth > 55 && frame % Math.round(rockRate) === 0) spawnWallRock();
+      if (depth > 200 && frame % 680 === 0 && Math.random() < 0.5) spawnGiantFace();
+
+      // Wall rock collision
+      for (const wr of wallRocks) {
+        if (Math.abs(wr.y - diver.y) < wr.h / 2 + 12) {
+          if (wr.side === 'left'  && diver.x - 14 < wr.protrude)     { die(); return; }
+          if (wr.side === 'right' && diver.x + 14 > W - wr.protrude) { die(); return; }
+        }
+      }
 
       // Obstacle collision
       for (const o of obstacles) {
@@ -868,6 +940,190 @@
           ctx.restore();
         }
       });
+    }
+
+    // ============================================================
+    // WALL ROCKS & GIANT FACES
+    // ============================================================
+    function drawWallRocks() {
+      wallRocks.forEach(wr => {
+        const { side, y, protrude, h, phase } = wr;
+        ctx.save();
+        ctx.translate(side === 'left' ? 0 : W, y);
+        if (side === 'right') ctx.scale(-1, 1);
+        ctx.shadowColor = 'rgba(0,212,255,0.14)'; ctx.shadowBlur = 10;
+        ctx.fillStyle = '#050e1c';
+        ctx.strokeStyle = 'rgba(0,175,215,0.2)'; ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(0, -h / 2);
+        ctx.lineTo(protrude * 0.48, -h * 0.38 + Math.sin(phase) * 8);
+        ctx.lineTo(protrude * 0.80, -h * 0.14 + Math.sin(phase * 1.3) * 5);
+        ctx.lineTo(protrude,         h * 0.03);
+        ctx.lineTo(protrude * 0.86,  h * 0.20 + Math.sin(phase * 0.9) * 6);
+        ctx.lineTo(protrude * 0.54,  h * 0.37 + Math.sin(phase * 1.6) * 4);
+        ctx.lineTo(0, h / 2);
+        ctx.closePath(); ctx.fill(); ctx.stroke();
+        // Tip glow
+        ctx.shadowColor = 'rgba(0,200,220,0.35)'; ctx.shadowBlur = 16;
+        ctx.fillStyle = 'rgba(0,155,200,0.18)';
+        ctx.beginPath(); ctx.arc(protrude, h * 0.03, 6, 0, Math.PI * 2); ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.restore();
+      });
+    }
+
+    // ---- Giant face draw dispatcher ----
+    function drawGiantFaces() {
+      giantFaces.forEach(gf => {
+        const { side, type, x, y, size, mouthAngle, timer } = gf;
+        ctx.save();
+        ctx.translate(x, y);
+        if (side === 'right') ctx.scale(-1, 1);
+        if      (type === 'angler')   drawAngler(size, mouthAngle, timer);
+        else if (type === 'fang')     drawFang(size, mouthAngle, timer);
+        else                          drawEyeball(size, timer);
+        ctx.restore();
+      });
+    }
+
+    // ---- Giant Anglerfish ----
+    function drawAngler(s, m, t) {
+      // Body blob
+      ctx.fillStyle = 'rgba(5,8,18,0.93)';
+      ctx.beginPath(); ctx.ellipse(-s*0.22, s*0.06, s*0.78, s*0.58, 0, 0, Math.PI*2); ctx.fill();
+      // Upper jaw
+      ctx.save(); ctx.rotate(-m * 0.44);
+      ctx.fillStyle = '#080d1a'; ctx.strokeStyle = 'rgba(0,175,210,0.22)'; ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(-s*0.08, 0);
+      ctx.quadraticCurveTo(s*0.44, -s*0.12, s*0.74, -m*s*0.30);
+      ctx.quadraticCurveTo(s*0.44, -s*0.04, -s*0.08, -s*0.04);
+      ctx.closePath(); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = 'rgba(212,226,235,0.9)';
+      [0.08,0.18,0.29,0.40,0.52,0.64].forEach((tx,i) => {
+        const tl = (i%2===0?14:9) * s/100;
+        ctx.beginPath(); ctx.moveTo(s*tx,-2); ctx.lineTo(s*tx-tl*0.3,tl); ctx.lineTo(s*tx+tl*0.3,tl); ctx.closePath(); ctx.fill();
+      });
+      ctx.restore();
+      // Lower jaw
+      ctx.save(); ctx.rotate(m * 0.44);
+      ctx.fillStyle = '#080d1a'; ctx.strokeStyle = 'rgba(0,175,210,0.22)'; ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(-s*0.08, 0);
+      ctx.quadraticCurveTo(s*0.44, s*0.12, s*0.74, m*s*0.30);
+      ctx.quadraticCurveTo(s*0.44, s*0.04, -s*0.08, s*0.04);
+      ctx.closePath(); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = 'rgba(212,226,235,0.9)';
+      [0.12,0.23,0.35,0.47,0.59].forEach((tx,i) => {
+        const tl = (i%2===0?10:16) * s/100;
+        ctx.beginPath(); ctx.moveTo(s*tx,2); ctx.lineTo(s*tx-tl*0.3,-tl); ctx.lineTo(s*tx+tl*0.3,-tl); ctx.closePath(); ctx.fill();
+      });
+      ctx.restore();
+      // Eye
+      ctx.fillStyle = '#ffcc00'; ctx.shadowColor = '#ff9900'; ctx.shadowBlur = 22;
+      ctx.beginPath(); ctx.arc(-s*0.06, -s*0.27, s*0.13, 0, Math.PI*2); ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = '#080400';
+      ctx.beginPath(); ctx.arc(-s*0.03, -s*0.27, s*0.07, 0, Math.PI*2); ctx.fill();
+      // Lure
+      const sw = Math.sin(t*0.09)*16;
+      ctx.strokeStyle = 'rgba(140,150,170,0.55)'; ctx.lineWidth = 1.8;
+      ctx.beginPath(); ctx.moveTo(-s*0.1,-s*0.52);
+      ctx.quadraticCurveTo(s*0.04+sw*0.5,-s*0.73,s*0.08+sw,-s*0.71); ctx.stroke();
+      const lp = (Math.sin(t*0.22)+1)*0.5;
+      ctx.shadowColor='#00d4ff'; ctx.shadowBlur=24*lp+6;
+      ctx.fillStyle=`rgba(0,210,255,${0.85+0.15*lp})`;
+      ctx.beginPath(); ctx.arc(s*0.08+sw,-s*0.71,s*0.065,0,Math.PI*2); ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+
+    // ---- Giant Dragonfish / Fangtooth ----
+    function drawFang(s, m, t) {
+      // Body
+      ctx.fillStyle = 'rgba(6,10,20,0.92)';
+      ctx.beginPath(); ctx.ellipse(-s*0.18, 0, s*0.68, s*0.40, 0, 0, Math.PI*2); ctx.fill();
+      // Upper jaw (short)
+      ctx.save(); ctx.rotate(-m*0.22);
+      ctx.fillStyle = '#080f1c';
+      ctx.beginPath();
+      ctx.moveTo(-s*0.05,0);
+      ctx.quadraticCurveTo(s*0.40,-s*0.06,s*0.60,-m*s*0.14);
+      ctx.quadraticCurveTo(s*0.40,-s*0.14,-s*0.05,-s*0.09);
+      ctx.closePath(); ctx.fill(); ctx.restore();
+      // Lower jaw (very elongated)
+      ctx.save(); ctx.rotate(m*0.50);
+      ctx.fillStyle = '#080f1c'; ctx.strokeStyle = 'rgba(0,200,140,0.2)'; ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(-s*0.05,0);
+      ctx.quadraticCurveTo(s*0.50,s*0.08,s*0.90,m*s*0.44);
+      ctx.lineTo(s*0.90,m*s*0.54);
+      ctx.quadraticCurveTo(s*0.50,s*0.20,-s*0.05,s*0.10);
+      ctx.closePath(); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = 'rgba(190,236,220,0.72)';
+      [0.06,0.16,0.27,0.38,0.50,0.62,0.74,0.85].forEach((tx,i) => {
+        const tl = (8+(i%3)*10)*s/100;
+        ctx.beginPath(); ctx.moveTo(s*tx,1); ctx.lineTo(s*tx-1.8,-tl); ctx.lineTo(s*tx+1.8,-tl); ctx.closePath(); ctx.fill();
+      });
+      ctx.restore();
+      // Eye
+      ctx.fillStyle = '#00ff77'; ctx.shadowColor = '#00ff44'; ctx.shadowBlur = 20;
+      ctx.beginPath(); ctx.arc(-s*0.02,-s*0.16,s*0.09,0,Math.PI*2); ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = '#001a0a';
+      ctx.beginPath(); ctx.arc(s*0.01,-s*0.16,s*0.045,0,Math.PI*2); ctx.fill();
+      // Photophores
+      for (let i=0;i<7;i++) {
+        const px=-s*0.30+i*s*0.06, py=s*0.12+Math.sin(i*1.4)*s*0.12;
+        const pb=(Math.sin(t*0.14+i*0.9)+1)*0.5;
+        ctx.fillStyle=`rgba(0,255,120,${0.35+0.45*pb})`;
+        ctx.shadowColor='#00ff77'; ctx.shadowBlur=8*pb;
+        ctx.beginPath(); ctx.arc(px,py,s*0.022,0,Math.PI*2); ctx.fill();
+      }
+      ctx.shadowBlur = 0;
+    }
+
+    // ---- Giant Eye (深淵から) ----
+    function drawEyeball(s, t) {
+      const pulse = (Math.sin(t*0.12)+1)*0.5;
+      // Outer darkness glow
+      ctx.shadowColor='#cc0033'; ctx.shadowBlur=44*pulse+12;
+      const grd = ctx.createRadialGradient(0,0,0,0,0,s*0.95);
+      grd.addColorStop(0,`rgba(75,5,18,${0.58+0.2*pulse})`);
+      grd.addColorStop(0.55,'rgba(28,2,9,0.38)');
+      grd.addColorStop(1,'rgba(0,0,0,0)');
+      ctx.fillStyle=grd;
+      ctx.beginPath(); ctx.arc(0,0,s*0.95,0,Math.PI*2); ctx.fill();
+      // Sclera
+      ctx.shadowBlur=0;
+      ctx.fillStyle='rgba(14,4,10,0.96)';
+      ctx.beginPath(); ctx.ellipse(0,0,s*0.64,s*0.50,0,0,Math.PI*2); ctx.fill();
+      // Iris
+      const ird=ctx.createRadialGradient(0,0,0,0,0,s*0.32);
+      ird.addColorStop(0,'rgba(200,20,58,0.95)');
+      ird.addColorStop(0.5,`rgba(150,10,38,${0.9+0.1*pulse})`);
+      ird.addColorStop(1,'rgba(80,5,18,0.8)');
+      ctx.fillStyle=ird;
+      ctx.shadowColor='#ff0033'; ctx.shadowBlur=18*pulse+4;
+      ctx.beginPath(); ctx.arc(0,0,s*0.33,0,Math.PI*2); ctx.fill();
+      ctx.shadowBlur=0;
+      // Pupil (vertical slit)
+      ctx.fillStyle='#02000a';
+      ctx.beginPath(); ctx.ellipse(0,0,s*0.07,s*0.29,0,0,Math.PI*2); ctx.fill();
+      // Highlight
+      ctx.fillStyle=`rgba(255,255,255,${0.18+0.14*pulse})`;
+      ctx.beginPath(); ctx.ellipse(-s*0.1,-s*0.1,s*0.06,s*0.04,-0.5,0,Math.PI*2); ctx.fill();
+      // Blood vessels
+      ctx.strokeStyle='rgba(175,25,48,0.28)'; ctx.lineWidth=1;
+      for (let i=0;i<6;i++) {
+        const a=(i/6)*Math.PI*2;
+        ctx.beginPath();
+        ctx.moveTo(Math.cos(a)*s*0.33,Math.sin(a)*s*0.33);
+        ctx.quadraticCurveTo(
+          Math.cos(a+0.55)*s*0.50+Math.cos(a)*s*0.04, Math.sin(a+0.55)*s*0.40+Math.sin(a)*s*0.04,
+          Math.cos(a)*s*0.62, Math.sin(a)*s*0.48
+        );
+        ctx.stroke();
+      }
     }
 
     function drawDiver() {
@@ -1021,6 +1277,8 @@
       }
       try {
         drawBg();
+        drawWallRocks();
+        drawGiantFaces();
         drawBubbles();
         orbs.forEach(drawOrb);
         obstacles.forEach(o => o.type==='jelly' ? drawJellyfish(o) : drawRock(o));
