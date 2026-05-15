@@ -183,6 +183,15 @@ document.addEventListener('DOMContentLoaded', () => {
     gameModal.classList.remove('open');
     document.body.style.overflow = '';
     setTimeout(() => { gameFrame.src = ''; }, 350);
+    // ゲーム中にスマホを回転していた場合、戻ったとき本体ページのレイアウトが
+    // 古いままになることがあるので、強制リフロー + resize イベントを発火
+    setTimeout(() => {
+      document.documentElement.style.display = 'none';
+      void document.documentElement.offsetHeight;
+      document.documentElement.style.display = '';
+      window.dispatchEvent(new Event('resize'));
+      window.scrollTo({ top: window.scrollY }); // スクロール位置の再固定
+    }, 380);
   }
 
   if (diveBtn)   diveBtn.addEventListener('click', openGame);

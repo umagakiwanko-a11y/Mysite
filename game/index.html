@@ -7,12 +7,21 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700&display=swap" rel="stylesheet">
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
-    body { background:#020817; color:#e8f4f8; font-family:'Outfit',sans-serif; overflow:hidden; height:100dvh; }
-    /* ゲーム本体のキャンバスだけに適用（#findsGrid 等のサムネ canvas が画面全体に
-       引き伸ばされないよう、汎用 canvas セレクタは使わない） */
+    body {
+      background:#000; color:#e8f4f8; font-family:'Outfit',sans-serif;
+      overflow:hidden; height:100dvh;
+    }
+    /* キャンバスは固定PC比率（16:10）でビューポート内にレターボックス表示。
+       バッファは固定サイズなので、スマホでも要素の相対サイズはPCと同じ。 */
     #c {
-      display:block; position:fixed; top:0; left:0;
-      width:100dvw; height:100dvh; touch-action:none;
+      display:block;
+      position:fixed;
+      top:50%; left:50%;
+      transform:translate(-50%, -50%);
+      width:min(100dvw, calc(100dvh * 16 / 10));
+      height:min(100dvh, calc(100dvw * 10 / 16));
+      touch-action:none;
+      background:#020817;
     }
 
     /* HUD */
@@ -462,16 +471,18 @@
     const overlay = document.getElementById('overlay');
     const mileEl  = document.getElementById('milestone');
 
-    let W, H;
+    // ★ バッファサイズはPC比率(16:10)で固定。CSSで実画面にフィット&レターボックス。
+    //    これでスマホでも要素の相対サイズが常にPCと同じになる。
+    const VIRTUAL_W = 1280, VIRTUAL_H = 800;
+    let W = VIRTUAL_W, H = VIRTUAL_H;
     function resize() {
-      const vp = window.visualViewport;
-      W = canvas.width  = vp ? Math.round(vp.width)  : document.documentElement.clientWidth;
-      H = canvas.height = vp ? Math.round(vp.height) : document.documentElement.clientHeight;
+      canvas.width  = VIRTUAL_W;
+      canvas.height = VIRTUAL_H;
+      W = VIRTUAL_W;
+      H = VIRTUAL_H;
     }
     resize();
-    window.addEventListener('resize', resize);
-    window.addEventListener('orientationchange', () => { setTimeout(resize, 200); setTimeout(resize, 500); });
-    if (window.visualViewport) window.visualViewport.addEventListener('resize', resize);
+    // 画面回転時にCSS側で表示サイズが変わるだけ。バッファは触らない。
 
     // Persistent collection
     const COLLECTED = new Set(JSON.parse(localStorage.getItem('fathom_collected') || '[]'));
