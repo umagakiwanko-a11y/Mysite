@@ -885,17 +885,28 @@
       if (depth > 55 && frame % Math.round(rockRate) === 0) spawnWallRock();
       if (depth > 200 && frame % 680 === 0 && Math.random() < 0.5) spawnGiantFace();
 
-      // Wall rock collision
+      // Wall rock collision（実際の岩の形に合わせて上下端で細くなる放物線判定）
+      const DIVER_R = 9; // ダイバー本体の当たり半径（腕は除外）
       for (const wr of wallRocks) {
-        if (Math.abs(wr.y - diver.y) < wr.h / 2 + 12) {
-          if (wr.side === 'left'  && diver.x - 14 < wr.protrude)     { die(); return; }
-          if (wr.side === 'right' && diver.x + 14 > W - wr.protrude) { die(); return; }
+        const halfH = wr.h / 2;
+        const dyNorm = (diver.y - wr.y) / halfH; // -1〜+1
+        if (Math.abs(dyNorm) < 0.92) {
+          // 1 - dy^2 で放物線。中央が広く、端は狭い。実際の見た目に近い
+          const falloff = 1 - dyNorm * dyNorm;
+          const effProt = wr.protrude * falloff;
+          if (wr.side === 'left'  && diver.x - DIVER_R < effProt)     { die(); return; }
+          if (wr.side === 'right' && diver.x + DIVER_R > W - effProt) { die(); return; }
         }
       }
 
-      // Obstacle collision
+      // Obstacle collision（タイプ別に判定半径を見た目に合わせて補正）
       for (const o of obstacles) {
-        if (Math.hypot(o.x - diver.x, o.y - diver.y) < o.r + 13) { die(); return; }
+        // 岩は不規則な多角形なので 0.8 倍、クラゲは傘部分だけ当たるので 0.7 倍
+        const factor = o.type === 'jelly' ? 0.68 : 0.80;
+        const obstacleR = o.r * factor;
+        // クラゲは傘が上半分にあるので、判定中心を少し上に
+        const yOffset = o.type === 'jelly' ? -o.r * 0.22 : 0;
+        if (Math.hypot(o.x - diver.x, (o.y + yOffset) - diver.y) < obstacleR + DIVER_R) { die(); return; }
       }
 
       // Orb collect → 酸素を回復
