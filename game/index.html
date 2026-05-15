@@ -979,9 +979,14 @@
         ctx.save();
         ctx.translate(x, y);
         if (side === 'right') ctx.scale(-1, 1);
-        if      (type === 'angler')   drawAngler(size, mouthAngle, timer);
-        else if (type === 'fang')     drawFang(size, mouthAngle, timer);
-        else                          drawEyeball(size, timer);
+        // 各描画を個別に save/restore でガード → 内部エラーで ctx が汚染されない
+        ctx.save();
+        try {
+          if      (type === 'angler')   drawAngler(size, mouthAngle, timer);
+          else if (type === 'fang')     drawFang(size, mouthAngle, timer);
+          else                          drawEyeball(size, timer);
+        } catch(e) { console.error('face draw:', e); }
+        ctx.restore();
         ctx.restore();
       });
     }
@@ -1270,6 +1275,12 @@
     // ============================================================
     function loop() {
       update();
+      // ★ 毎フレーム変換行列・描画状態をハードリセット
+      // save/restore がどんなに崩れていても次フレームは必ずクリーン
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.globalAlpha = 1;
+      ctx.shadowBlur = 0;
+      ctx.globalCompositeOperation = 'source-over';
       ctx.save();
       if (shakeAmt > 0.5) {
         ctx.translate((Math.random()-0.5)*shakeAmt, (Math.random()-0.5)*shakeAmt);
@@ -1290,7 +1301,7 @@
       } catch(e) {
         console.error('loop:', e);
       }
-      ctx.restore();  // 必ずsaveと対になるよう外に出す
+      ctx.restore();
       requestAnimationFrame(loop);
     }
 
