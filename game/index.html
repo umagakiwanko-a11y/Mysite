@@ -852,8 +852,10 @@
         aura.addColorStop(1, 'rgba(0,0,0,0)');
         ctx.save(); ctx.fillStyle = aura;
         ctx.beginPath(); ctx.arc(x, y, creature.hitR * 2.2, 0, Math.PI * 2); ctx.fill(); ctx.restore();
-        // Draw creature
-        creature.draw(ctx, x, y, t);
+        // Draw creature (save/restore を必ず対にしてctx汚染を防ぐ)
+        ctx.save();
+        try { creature.draw(ctx, x, y, t); } catch(e) { console.error('creature draw:', e); }
+        ctx.restore();
         // Name tag on hover (always show for discoverability)
         const tagAlpha = 0.55 + Math.sin(frame * 0.04 + x) * 0.15;
         if (!COLLECTED.has(creature.id)) {
@@ -870,25 +872,114 @@
 
     function drawDiver() {
       const { x, y, vx } = diver;
-      const tilt = vx * 2.5;
-      ctx.save(); ctx.translate(x, y); ctx.rotate(tilt * Math.PI / 180);
-      ctx.shadowColor = 'rgba(0,212,255,0.5)'; ctx.shadowBlur = 16;
-      ctx.fillStyle = '#3a8ab0';
-      ctx.beginPath(); ctx.ellipse(-9,18,5,11,-0.25,0,Math.PI*2); ctx.fill();
-      ctx.beginPath(); ctx.ellipse(9,18,5,11,0.25,0,Math.PI*2); ctx.fill();
-      ctx.fillStyle = '#c8dde8';
-      ctx.beginPath(); ctx.ellipse(0,4,10,15,0,0,Math.PI*2); ctx.fill();
-      ctx.fillStyle = '#1a3a5c';
-      ctx.beginPath(); ctx.roundRect(-5,-3,10,13,3); ctx.fill();
-      ctx.fillStyle = 'rgba(40,140,180,0.9)';
-      ctx.beginPath(); ctx.ellipse(0,-13,9,10,0,0,Math.PI*2); ctx.fill();
-      ctx.fillStyle = 'rgba(0,212,255,0.28)'; ctx.strokeStyle = 'rgba(0,212,255,0.8)'; ctx.lineWidth = 1.2;
-      ctx.beginPath(); ctx.ellipse(0,-13,6,6.5,0,0,Math.PI*2); ctx.fill(); ctx.stroke();
-      if (frame % 12 < 6) {
-        ctx.fillStyle = 'rgba(0,212,255,0.4)';
-        ctx.beginPath(); ctx.arc(12,-6,2,0,Math.PI*2); ctx.fill();
+      const tilt = vx * 1.6;
+      const t = frame * 0.075;
+      const kickL =  Math.sin(t) * 0.38;
+      const kickR =  Math.sin(t + Math.PI) * 0.38;
+
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(tilt * Math.PI / 180);
+
+      // ── タンク（胴体より奥にあるので最初に描く）──
+      ctx.fillStyle = '#182840';
+      ctx.beginPath(); ctx.ellipse(0, 6, 6, 14, 0, 0, Math.PI * 2); ctx.fill();
+      // タンクのバルブ
+      ctx.fillStyle = '#0a1e38';
+      ctx.beginPath(); ctx.ellipse(0, -8, 3, 4, 0, 0, Math.PI * 2); ctx.fill();
+
+      // ── フィン（下から描いてボディに隠れるように）──
+      ctx.fillStyle = '#2a7ea8';
+      // 左フィン
+      ctx.save();
+      ctx.translate(-6, 24);
+      ctx.rotate(kickL);
+      ctx.beginPath();
+      ctx.moveTo(-4, 0); ctx.bezierCurveTo(-6, 8, -5, 18, 0, 20);
+      ctx.bezierCurveTo(5, 18, 6, 8, 4, 0);
+      ctx.closePath(); ctx.fill();
+      ctx.restore();
+      // 右フィン
+      ctx.save();
+      ctx.translate(6, 24);
+      ctx.rotate(kickR);
+      ctx.beginPath();
+      ctx.moveTo(-4, 0); ctx.bezierCurveTo(-6, 8, -5, 18, 0, 20);
+      ctx.bezierCurveTo(5, 18, 6, 8, 4, 0);
+      ctx.closePath(); ctx.fill();
+      ctx.restore();
+
+      // ── 脚 ──
+      ctx.strokeStyle = '#0d1c30';
+      ctx.lineWidth = 7; ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(-5, 16);
+      ctx.lineTo(-5 + Math.sin(kickL) * 5, 26); ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(5, 16);
+      ctx.lineTo(5 + Math.sin(kickR) * 5, 26); ctx.stroke();
+
+      // ── ウェットスーツ胴体 ──
+      ctx.fillStyle = '#0e1e35';
+      ctx.strokeStyle = 'rgba(0,180,220,0.2)';
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.ellipse(0, 5, 11, 17, 0, 0, Math.PI * 2);
+      ctx.fill(); ctx.stroke();
+
+      // BCDベスト（左右のライン）
+      ctx.strokeStyle = 'rgba(0,160,210,0.5)';
+      ctx.lineWidth = 2; ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(-7, -6); ctx.quadraticCurveTo(-11, 4, -7, 14); ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(7, -6); ctx.quadraticCurveTo(11, 4, 7, 14); ctx.stroke();
+
+      // ── 腕 ──
+      ctx.strokeStyle = '#0e1e35';
+      ctx.lineWidth = 6; ctx.lineCap = 'round';
+      // 左腕
+      ctx.beginPath();
+      ctx.moveTo(-10, 0);
+      ctx.quadraticCurveTo(-20, 5, -25, 2); ctx.stroke();
+      // 右腕
+      ctx.beginPath();
+      ctx.moveTo(10, 0);
+      ctx.quadraticCurveTo(20, 5, 25, 2); ctx.stroke();
+      // グローブ
+      ctx.fillStyle = '#1a3050';
+      ctx.beginPath(); ctx.arc(-25, 2, 4, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(25, 2, 4, 0, Math.PI * 2); ctx.fill();
+
+      // ── ヘルメット ──
+      ctx.shadowColor = 'rgba(0,212,255,0.5)'; ctx.shadowBlur = 14;
+      ctx.fillStyle = '#091626';
+      ctx.beginPath(); ctx.arc(0, -14, 13, 0, Math.PI * 2); ctx.fill();
+
+      // バイザー（グロー）
+      ctx.shadowColor = 'rgba(0,212,255,0.95)'; ctx.shadowBlur = 18;
+      ctx.fillStyle = 'rgba(0,180,225,0.28)';
+      ctx.strokeStyle = '#00d4ff'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.ellipse(0, -14, 9, 7, 0, 0, Math.PI * 2);
+      ctx.fill(); ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      // バイザー映り込み
+      ctx.fillStyle = 'rgba(255,255,255,0.28)';
+      ctx.beginPath(); ctx.ellipse(-3, -17, 3, 1.8, -0.35, 0, Math.PI * 2); ctx.fill();
+
+      // ── 気泡（レギュレーターから断続的に） ──
+      const bPhase = frame % 22;
+      if (bPhase < 11) {
+        ctx.fillStyle = `rgba(0,212,255,${0.45 - bPhase * 0.03})`;
+        ctx.beginPath(); ctx.arc(11 + bPhase * 0.3, -19 - bPhase * 0.4, 2.2 - bPhase * 0.1, 0, Math.PI * 2); ctx.fill();
       }
-      ctx.shadowBlur = 0; ctx.restore();
+      if (bPhase < 6) {
+        ctx.fillStyle = `rgba(0,212,255,${0.3 - bPhase * 0.04})`;
+        ctx.beginPath(); ctx.arc(14 + bPhase * 0.4, -17 - bPhase * 0.3, 1.4, 0, Math.PI * 2); ctx.fill();
+      }
+
+      ctx.shadowBlur = 0;
+      ctx.restore();
     }
 
     function drawDepthBar() {
@@ -922,13 +1013,13 @@
     // MAIN LOOP
     // ============================================================
     function loop() {
+      update();
+      ctx.save();
+      if (shakeAmt > 0.5) {
+        ctx.translate((Math.random()-0.5)*shakeAmt, (Math.random()-0.5)*shakeAmt);
+        shakeAmt *= 0.84;
+      }
       try {
-        update();
-        ctx.save();
-        if (shakeAmt > 0.5) {
-          ctx.translate((Math.random()-0.5)*shakeAmt, (Math.random()-0.5)*shakeAmt);
-          shakeAmt *= 0.84;
-        }
         drawBg();
         drawBubbles();
         orbs.forEach(drawOrb);
@@ -938,10 +1029,10 @@
         if (state === 'playing') drawDiver();
         drawDepthBar();
         drawNotifications();
-        ctx.restore();
       } catch(e) {
         console.error('loop:', e);
       }
+      ctx.restore();  // 必ずsaveと対になるよう外に出す
       requestAnimationFrame(loop);
     }
 
