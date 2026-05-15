@@ -8,7 +8,9 @@
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
     body { background:#020817; color:#e8f4f8; font-family:'Outfit',sans-serif; overflow:hidden; height:100dvh; }
-    canvas {
+    /* ゲーム本体のキャンバスだけに適用（#findsGrid 等のサムネ canvas が画面全体に
+       引き伸ばされないよう、汎用 canvas セレクタは使わない） */
+    #c {
       display:block; position:fixed; top:0; left:0;
       width:100dvw; height:100dvh; touch-action:none;
     }
@@ -914,13 +916,19 @@
       ctx.shadowBlur=0; ctx.restore();
     }
 
+    // #rrggbb → rgba(r,g,b,a)
+    function hexToRgba(hex, a) {
+      const m = /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(hex);
+      if (!m) return `rgba(0,212,255,${a})`;
+      return `rgba(${parseInt(m[1],16)},${parseInt(m[2],16)},${parseInt(m[3],16)},${a})`;
+    }
+
     function drawCollectibles() {
       collectibles.forEach(c => {
         const { x, y, t, creature } = c;
         // Glow aura
         const aura = ctx.createRadialGradient(x, y, 0, x, y, creature.hitR * 2.2);
-        aura.addColorStop(0, creature.glowColor.replace('#','rgba(').replace(/(..)(..)(..)/, (_,r,g,b)=>
-          `${parseInt(r,16)},${parseInt(g,16)},${parseInt(b,16)},`) + '0.18)');
+        aura.addColorStop(0, hexToRgba(creature.glowColor, 0.18));
         aura.addColorStop(1, 'rgba(0,0,0,0)');
         ctx.save(); ctx.fillStyle = aura;
         ctx.beginPath(); ctx.arc(x, y, creature.hitR * 2.2, 0, Math.PI * 2); ctx.fill(); ctx.restore();
