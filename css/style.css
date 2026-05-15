@@ -1946,44 +1946,88 @@ body {
   .sim-right { position: static; }
 }
 
-/* ---- Gallery Game Card ---- */
-.gallery-placeholder--game {
-  background: linear-gradient(160deg, #020817 0%, #060f24 50%, #030b1e 100%) !important;
-  position: relative; overflow: hidden;
+/* ---- Deep Dive floating button ---- */
+#diveBtn {
+  position: fixed;
+  bottom: 2rem;
+  left: 2rem;
+  z-index: 900;
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: rgba(2,8,23,0.75);
+  border: 1px solid rgba(0,212,255,0.2);
+  color: rgba(0,212,255,0.55);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+  padding: 0;
 }
-.gallery-placeholder--game::before {
-  content: '';
-  position: absolute; inset: 0;
-  background:
-    radial-gradient(ellipse at 50% 110%, rgba(0,212,255,0.12) 0%, transparent 60%),
-    radial-gradient(ellipse at 20% 40%, rgba(120,40,200,0.08) 0%, transparent 50%);
+#diveBtn svg { width: 22px; height: 22px; }
+#diveBtn:hover {
+  color: var(--glow);
+  border-color: var(--glow);
+  box-shadow: 0 0 20px rgba(0,212,255,0.25), 0 4px 16px rgba(0,0,0,0.4);
+  transform: translateY(-2px);
 }
-.game-preview-canvas {
-  position: absolute; inset: 0; width: 100%; height: 100%;
-  object-fit: cover;
+.dive-btn-tip {
+  position: absolute;
+  left: calc(100% + 10px);
+  top: 50%; transform: translateY(-50%);
+  background: rgba(2,8,23,0.9);
+  border: 1px solid rgba(0,212,255,0.15);
+  color: var(--glow);
+  font-family: var(--font-jp);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  padding: 0.3rem 0.8rem;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s;
 }
-.game-preview-overlay {
-  position: absolute; inset: 0;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  gap: 0.5rem;
-  background: rgba(2,8,23,0.35);
-  transition: background 0.3s;
+#diveBtn:hover .dive-btn-tip { opacity: 1; }
+
+/* ---- Game modal ---- */
+#gameModal {
+  position: fixed; inset: 0;
+  z-index: 2000;
+  background: #020817;
+  display: flex; align-items: stretch;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s cubic-bezier(0.4,0,0.2,1);
 }
-.gallery-item--game:hover .game-preview-overlay {
-  background: rgba(2,8,23,0.15);
+#gameModal.open {
+  opacity: 1;
+  pointer-events: auto;
 }
-.game-preview-label {
-  font-family: var(--font-en); font-size: 0.65rem; font-weight: 700;
-  letter-spacing: 0.25em; color: rgba(0,212,255,0.9);
-  border: 1px solid rgba(0,212,255,0.35);
-  padding: 0.25rem 0.9rem; border-radius: 50px;
-  background: rgba(0,212,255,0.08);
+#gameFrame {
+  width: 100%; height: 100%;
+  border: none;
+  display: block;
 }
-.gallery-tag--game {
-  color: #00ffcc !important;
-  background: rgba(0,255,204,0.08) !important;
-  border: 1px solid rgba(0,255,204,0.2) !important;
+#gameClose {
+  position: absolute;
+  top: 1rem; right: 1rem;
+  z-index: 10;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: rgba(2,8,23,0.8);
+  border: 1px solid rgba(0,212,255,0.2);
+  color: rgba(0,212,255,0.6);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  backdrop-filter: blur(8px);
+  transition: all 0.25s;
+  padding: 0;
+}
+#gameClose svg { width: 16px; height: 16px; }
+#gameClose:hover {
+  color: var(--glow);
+  border-color: var(--glow);
+  box-shadow: 0 0 16px rgba(0,212,255,0.2);
 }
 
 /* ---- Skill Map ---- */

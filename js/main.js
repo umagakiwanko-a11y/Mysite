@@ -168,6 +168,34 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // ---- Deep Dive game modal ----
+  const diveBtn   = document.getElementById('diveBtn');
+  const gameModal = document.getElementById('gameModal');
+  const gameClose = document.getElementById('gameClose');
+  const gameFrame = document.getElementById('gameFrame');
+
+  function openGame() {
+    gameFrame.src = 'game/index.html';
+    gameModal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeGame() {
+    gameModal.classList.remove('open');
+    document.body.style.overflow = '';
+    setTimeout(() => { gameFrame.src = ''; }, 350);
+  }
+
+  if (diveBtn)   diveBtn.addEventListener('click', openGame);
+  if (gameClose) gameClose.addEventListener('click', closeGame);
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && gameModal && gameModal.classList.contains('open')) closeGame();
+  });
+
+  window.addEventListener('message', e => {
+    if (e.data === 'closeGame') closeGame();
+  });
+
   // ---- Active nav link on scroll ----
   const sections = document.querySelectorAll('section[id]');
 

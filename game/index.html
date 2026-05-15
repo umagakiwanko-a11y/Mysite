@@ -101,8 +101,10 @@
     #backLink {
       position:fixed; bottom:1.2rem; left:50%; transform:translateX(-50%);
       font-size:0.72rem; letter-spacing:0.1em;
-      color:rgba(0,212,255,0.4); text-decoration:none;
+      color:rgba(0,212,255,0.4); background:none; border:none;
+      cursor:pointer; font-family:'Outfit',sans-serif;
       transition:color 0.3s; z-index:6; white-space:nowrap;
+      padding:0.4rem 0.8rem;
     }
     #backLink:hover { color:#00d4ff; }
 
@@ -146,7 +148,7 @@
   </div>
 
   <div id="milestone">DEPTH 100m !</div>
-  <a href="../index.html" id="backLink">← ポートフォリオに戻る</a>
+  <button id="backLink">← 戻る</button>
 
   <script>
   (() => {
@@ -273,12 +275,16 @@
       // Shake decay
       if (shakeAmt > 0) shakeAmt *= 0.85;
 
-      // Diver movement
-      const accel = 0.014, friction = 0.86;
+      // Diver movement — ピクセル直接制御で小刻みに動く
+      const accel   = 2.8;   // px/frame 加速度
+      const maxSpd  = 9;     // px/frame 上限
+      const friction = 0.78; // 摩擦（高いほどすぐ止まる = 精密）
       if (keys['ArrowLeft']  || keys['a'] || keys['A'] || tLeft)  diver.vx -= accel;
       if (keys['ArrowRight'] || keys['d'] || keys['D'] || tRight) diver.vx += accel;
+      diver.vx = Math.max(-maxSpd, Math.min(maxSpd, diver.vx));
       diver.vx *= friction;
-      diver.x = Math.max(28, Math.min(W - 28, diver.x + diver.vx * W));
+      if (Math.abs(diver.vx) < 0.05) diver.vx = 0; // 微小ドリフトを止める
+      diver.x = Math.max(28, Math.min(W - 28, diver.x + diver.vx));
 
       // Move obstacles up
       const dy = speed;
@@ -608,6 +614,16 @@
 
     // ---- Init ----
     document.getElementById('startBtn').addEventListener('click', startGame);
+
+    // 戻るボタン: iframe内ならpostMessage、直接アクセスなら遷移
+    document.getElementById('backLink').addEventListener('click', () => {
+      if (window.parent !== window) {
+        window.parent.postMessage('closeGame', '*');
+      } else {
+        window.location.href = '../index.html';
+      }
+    });
+
     loop();
   })();
   </script>
