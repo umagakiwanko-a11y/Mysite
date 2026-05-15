@@ -657,11 +657,17 @@
           creature.draw(pc, 0, 0, 1.5);
           pc.restore();
         } else {
-          // Silhouette
+          // 完全なシルエット表示：普通に描画したあと source-in で全ピクセルを単色に置き換え
           const pc = cv.getContext('2d');
-          pc.save(); pc.translate(35, 38); pc.globalAlpha = 0.12;
+          pc.save(); pc.translate(35, 38);
+          // shadow が出ないように一旦オフ（中の draw 関数が shadow を再設定するので
+          // 描画後にもう一度フラットに潰す）
           creature.draw(pc, 0, 0, 1.5);
           pc.restore();
+          pc.globalCompositeOperation = 'source-in';
+          pc.fillStyle = 'rgba(30, 60, 95, 0.85)';
+          pc.fillRect(0, 0, 70, 70);
+          pc.globalCompositeOperation = 'source-over';
         }
         const nameEl = document.createElement('div');
         nameEl.className = 'bestiary-name';
