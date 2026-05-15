@@ -10,7 +10,9 @@
     body {
       background:#000; color:#e8f4f8; font-family:'Outfit',sans-serif;
       overflow:hidden; height:100dvh;
+      opacity:0; transition:opacity 0.4s ease-out;
     }
+    body.loaded { opacity:1; }
     /* キャンバスは画面全体にフィット（黒帯なし）。
        バッファ幅は1280固定、高さは端末アスペクトに合わせて伸縮するので
        要素の相対サイズは常にPC感を維持しつつ、端末いっぱいに広がる。 */
@@ -494,18 +496,9 @@
     window.addEventListener('orientationchange', () => {
       setTimeout(resize, 100);
       setTimeout(resize, 400);
-      setTimeout(notifyParentOrientation, 500);
     });
     if (window.visualViewport) {
-      window.visualViewport.addEventListener('resize', () => {
-        resize();
-        notifyParentOrientation();
-      });
-    }
-    function notifyParentOrientation() {
-      if (window.parent !== window) {
-        try { window.parent.postMessage('gameOrientationChange', '*'); } catch(e) {}
-      }
+      window.visualViewport.addEventListener('resize', resize);
     }
 
     // Persistent collection
@@ -798,8 +791,16 @@
     // BACK BUTTON
     // ============================================================
     function handleBack() {
-      if (window.parent !== window) window.parent.postMessage('closeGame', '*');
-      else window.location.href = '../index.html';
+      // フェードアウトしてからメインページへ戻る
+      document.body.style.transition = 'opacity 0.25s';
+      document.body.style.opacity = '0';
+      setTimeout(() => {
+        if (window.history.length > 1 && document.referrer.includes(location.host)) {
+          window.history.back();
+        } else {
+          window.location.href = '../index.html';
+        }
+      }, 240);
     }
     document.getElementById('backLink').addEventListener('click', handleBack);
 
@@ -1454,6 +1455,8 @@
     // ============================================================
     document.getElementById('startBtn').addEventListener('click', startGame);
     loop();
+    // フェードイン
+    requestAnimationFrame(() => document.body.classList.add('loaded'));
   })();
   </script>
 </body>

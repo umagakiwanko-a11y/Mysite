@@ -168,60 +168,47 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // ---- Deep Dive game modal ----
-  const diveBtn   = document.getElementById('diveBtn');
-  const gameModal = document.getElementById('gameModal');
-  const gameClose = document.getElementById('gameClose');
-  const gameFrame = document.getElementById('gameFrame');
-
-  function openGame() {
-    gameFrame.src = 'game/index.html';
-    gameModal.classList.add('open');
-    document.body.style.overflow = 'hidden';
+  // ---- Deep Dive game: 別ページ遷移（iframe廃止） ----
+  // スクロール位置を sessionStorage に保存し、戻ってきた時に復元
+  const diveBtn = document.getElementById('diveBtn');
+  if (diveBtn) {
+    diveBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      sessionStorage.setItem('dive_returnScroll', String(window.scrollY));
+      // フェードアウト演出
+      document.body.style.transition = 'opacity 0.28s';
+      document.body.style.opacity = '0';
+      setTimeout(() => {
+        window.location.href = 'game/index.html';
+      }, 260);
+    });
   }
+  // ゲームから戻ってきたらスクロール位置復元 + フェードイン
+  const ret = sessionStorage.getItem('dive_returnScroll');
+  if (ret !== null) {
+    sessionStorage.removeItem('dive_returnScroll');
+    window.scrollTo(0, parseInt(ret, 10) || 0);
+    document.body.style.opacity = '0';
+    requestAnimationFrame(() => {
+      document.body.style.transition = 'opacity 0.4s';
+      document.body.style.opacity = '1';
+    });
+  }
+
   // 強力リフロー：iOS Safariのビューポート固着バグを解除する複合トリック
   function forceReflow() {
-    // 1) viewport meta を一旦書き換えて戻す（ビューポート再計算を促す）
     const vp = document.querySelector('meta[name="viewport"]');
     if (vp) {
       const original = vp.getAttribute('content');
       vp.setAttribute('content', original + ', maximum-scale=1.0');
-      // 直後に元へ
       requestAnimationFrame(() => vp.setAttribute('content', original));
     }
-    // 2) html を一旦非表示→表示でリフロー強制
     document.documentElement.style.display = 'none';
     void document.documentElement.offsetHeight;
     document.documentElement.style.display = '';
-    // 3) 横スクロール位置を強制的に0へ
     window.scrollTo(window.scrollX > 0 ? 0 : window.scrollX, window.scrollY);
-    // 4) resize イベント発火
     window.dispatchEvent(new Event('resize'));
   }
-
-  function closeGame() {
-    gameModal.classList.remove('open');
-    document.body.style.overflow = '';
-    setTimeout(() => { gameFrame.src = ''; }, 350);
-    setTimeout(forceReflow, 380);
-    setTimeout(forceReflow, 800); // 二段構えでiOS Safariの遅延に対応
-  }
-
-  if (diveBtn)   diveBtn.addEventListener('click', openGame);
-  if (gameClose) gameClose.addEventListener('click', closeGame);
-
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && gameModal && gameModal.classList.contains('open')) closeGame();
-  });
-
-  window.addEventListener('message', e => {
-    if (e.data === 'closeGame') closeGame();
-    // ゲーム内で画面回転を検知したら、親ページもリフロー
-    if (e.data === 'gameOrientationChange') {
-      setTimeout(forceReflow, 50);
-      setTimeout(forceReflow, 400);
-    }
-  });
 
   // ---- Orientation change: force reflow ----
   // iOS Safari等で横→縦に戻した際に vh などが古い値で固定されるのを補正

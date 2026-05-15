@@ -736,8 +736,8 @@
     </div>
   </section>
 
-  <!-- ▼ Deep Dive mini game — floating button + modal ▼ -->
-  <button id="diveBtn" aria-label="ミニゲームで遊ぶ">
+  <!-- ▼ Deep Dive mini game — floating button (別ページ遷移) ▼ -->
+  <a id="diveBtn" href="game/index.html" aria-label="ミニゲームで遊ぶ">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
       <ellipse cx="12" cy="9" rx="7" ry="6"/>
       <ellipse cx="12" cy="9" rx="4" ry="3.5" stroke-opacity="0.5"/>
@@ -748,16 +748,7 @@
       <circle cx="19" cy="8" r="0.7" fill="currentColor" stroke="none" opacity="0.4"/>
     </svg>
     <span class="dive-btn-tip">深く潜る</span>
-  </button>
-
-  <div id="gameModal" aria-modal="true" role="dialog" aria-label="DEEP DIVE ゲーム">
-    <button id="gameClose" aria-label="ゲームを閉じる">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M18 6L6 18M6 6l12 12" stroke-linecap="round"/>
-      </svg>
-    </button>
-    <iframe id="gameFrame" src="" title="DEEP DIVE" allowfullscreen></iframe>
-  </div>
+  </a>
   <!-- ▲ Deep Dive mini game ▲ -->
 
   <footer class="footer">
