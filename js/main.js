@@ -195,33 +195,31 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 強力リフロー：iOS Safariのビューポート固着バグを解除する複合トリック
-  function forceReflow() {
+  // ---- Orientation change: 控えめなviewport再計算 ----
+  // viewport metaを一瞬書き換えるだけ。displayをnoneにしたりはしない（スクロール阻害になるため）
+  function nudgeViewport() {
     const vp = document.querySelector('meta[name="viewport"]');
-    if (vp) {
-      const original = vp.getAttribute('content');
-      vp.setAttribute('content', original + ', maximum-scale=1.0');
-      requestAnimationFrame(() => vp.setAttribute('content', original));
-    }
-    document.documentElement.style.display = 'none';
-    void document.documentElement.offsetHeight;
-    document.documentElement.style.display = '';
-    window.scrollTo(window.scrollX > 0 ? 0 : window.scrollX, window.scrollY);
-    window.dispatchEvent(new Event('resize'));
+    if (!vp) return;
+    const original = vp.getAttribute('content');
+    vp.setAttribute('content', original + ', maximum-scale=1.0');
+    requestAnimationFrame(() => vp.setAttribute('content', original));
+    window.scrollTo(0, window.scrollY); // 横ズレだけ修正
   }
-
-  // ---- Orientation change: force reflow ----
-  // iOS Safari等で横→縦に戻した際に vh などが古い値で固定されるのを補正
   window.addEventListener('orientationchange', () => {
-    setTimeout(forceReflow, 100);
-    setTimeout(forceReflow, 400);
-    setTimeout(forceReflow, 900);
+    setTimeout(nudgeViewport, 150);
+    setTimeout(nudgeViewport, 500);
   });
-  if (window.visualViewport) {
-    window.visualViewport.addEventListener('resize', () => {
-      setTimeout(forceReflow, 50);
-    });
-  }
+  // ※ visualViewport.resize は iOS で URL バー伸縮のたびに発火するので
+  //   ハンドラを付けない。orientationchangeだけで十分。
+
+  // bfcache から復帰した時、フェード状態のまま固まらないように opacity をリセット
+  // (初回ロードのfade-in演出は妨げないため persisted=true のときだけ)
+  window.addEventListener('pageshow', (e) => {
+    if (e.persisted) {
+      document.body.style.transition = '';
+      document.body.style.opacity = '1';
+    }
+  });
 
   // ---- Active nav link on scroll ----
   const sections = document.querySelectorAll('section[id]');
