@@ -219,7 +219,8 @@ body {
 /* ---- Hero ---- */
 .hero {
   position: relative;
-  min-height: 100vh;
+  min-height: 100vh;          /* fallback */
+  min-height: 100dvh;         /* 横→縦回転後の高さズレを解消 */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -1563,6 +1564,7 @@ body {
     width: 70%;
     max-width: 300px;
     height: 100vh;
+    height: 100dvh;
     background: rgba(2, 8, 23, 0.97);
     backdrop-filter: blur(20px);
     flex-direction: column;

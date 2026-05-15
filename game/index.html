@@ -785,7 +785,8 @@
       if (frame % Math.round(obsRate) === 0) spawnObs();
       if (frame % 185 === 0) spawnOrb();
       if (frame % 5 === 0) spawnBubble();
-      const colRate = Math.max(280, 520 - depth * 0.15);
+      // 出現頻度を1/3に（レア感を増す）
+      const colRate = Math.max(840, 1560 - depth * 0.45);
       if (frame % Math.round(colRate) === 0) spawnCollectible();
       const rockRate = Math.max(52, 290 - depth * 0.22);
       if (depth > 55 && frame % Math.round(rockRate) === 0) spawnWallRock();

@@ -196,6 +196,19 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.data === 'closeGame') closeGame();
   });
 
+  // ---- Orientation change: force reflow ----
+  // iOS Safari等で横→縦に戻した際に vh などが古い値で固定されるのを補正
+  function nudgeReflow() {
+    document.documentElement.style.display = 'none';
+    // Trigger reflow
+    void document.documentElement.offsetHeight;
+    document.documentElement.style.display = '';
+  }
+  window.addEventListener('orientationchange', () => {
+    setTimeout(nudgeReflow, 100);
+    setTimeout(nudgeReflow, 400);
+  });
+
   // ---- Active nav link on scroll ----
   const sections = document.querySelectorAll('section[id]');
 
