@@ -12,7 +12,14 @@
       font-family:'Outfit',sans-serif;
       overflow:hidden; height:100dvh;
     }
-    canvas { display:block; touch-action:none; }
+    canvas {
+      display: block;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100dvw;
+      height: 100dvh;
+      touch-action: none;
+    }
 
     /* HUD */
     #hud {
@@ -153,11 +160,21 @@
     // ---- Resize ----
     let W, H;
     function resize() {
-      W = canvas.width  = window.innerWidth;
-      H = canvas.height = window.innerHeight;
+      // visualViewport が使える場合は優先（iOS Safari で横→縦戻し時に innerWidth が固まる問題を回避）
+      const vp = window.visualViewport;
+      W = canvas.width  = vp ? Math.round(vp.width)  : document.documentElement.clientWidth;
+      H = canvas.height = vp ? Math.round(vp.height) : document.documentElement.clientHeight;
     }
     resize();
     window.addEventListener('resize', resize);
+    // orientationchange は寸法確定まで遅延が必要（特に iOS）
+    window.addEventListener('orientationchange', () => {
+      setTimeout(resize, 200);
+      setTimeout(resize, 500); // 念のため二段階
+    });
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', resize);
+    }
 
     // ---- State ----
     let state = 'menu';
