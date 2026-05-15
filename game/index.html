@@ -483,6 +483,19 @@
     }
     resize();
     // 画面回転時にCSS側で表示サイズが変わるだけ。バッファは触らない。
+    // ただし、親ページに「回転したよ」を通知して、親側でリフローしてもらう
+    function notifyParentOrientation() {
+      if (window.parent !== window) {
+        try { window.parent.postMessage('gameOrientationChange', '*'); } catch(e) {}
+      }
+    }
+    window.addEventListener('orientationchange', () => {
+      setTimeout(notifyParentOrientation, 100);
+      setTimeout(notifyParentOrientation, 500);
+    });
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', notifyParentOrientation);
+    }
 
     // Persistent collection
     const COLLECTED = new Set(JSON.parse(localStorage.getItem('fathom_collected') || '[]'));

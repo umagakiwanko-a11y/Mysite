@@ -179,19 +179,32 @@ document.addEventListener('DOMContentLoaded', () => {
     gameModal.classList.add('open');
     document.body.style.overflow = 'hidden';
   }
+  // 強力リフロー：iOS Safariのビューポート固着バグを解除する複合トリック
+  function forceReflow() {
+    // 1) viewport meta を一旦書き換えて戻す（ビューポート再計算を促す）
+    const vp = document.querySelector('meta[name="viewport"]');
+    if (vp) {
+      const original = vp.getAttribute('content');
+      vp.setAttribute('content', original + ', maximum-scale=1.0');
+      // 直後に元へ
+      requestAnimationFrame(() => vp.setAttribute('content', original));
+    }
+    // 2) html を一旦非表示→表示でリフロー強制
+    document.documentElement.style.display = 'none';
+    void document.documentElement.offsetHeight;
+    document.documentElement.style.display = '';
+    // 3) 横スクロール位置を強制的に0へ
+    window.scrollTo(window.scrollX > 0 ? 0 : window.scrollX, window.scrollY);
+    // 4) resize イベント発火
+    window.dispatchEvent(new Event('resize'));
+  }
+
   function closeGame() {
     gameModal.classList.remove('open');
     document.body.style.overflow = '';
     setTimeout(() => { gameFrame.src = ''; }, 350);
-    // ゲーム中にスマホを回転していた場合、戻ったとき本体ページのレイアウトが
-    // 古いままになることがあるので、強制リフロー + resize イベントを発火
-    setTimeout(() => {
-      document.documentElement.style.display = 'none';
-      void document.documentElement.offsetHeight;
-      document.documentElement.style.display = '';
-      window.dispatchEvent(new Event('resize'));
-      window.scrollTo({ top: window.scrollY }); // スクロール位置の再固定
-    }, 380);
+    setTimeout(forceReflow, 380);
+    setTimeout(forceReflow, 800); // 二段構えでiOS Safariの遅延に対応
   }
 
   if (diveBtn)   diveBtn.addEventListener('click', openGame);
@@ -203,20 +216,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.addEventListener('message', e => {
     if (e.data === 'closeGame') closeGame();
+    // ゲーム内で画面回転を検知したら、親ページもリフロー
+    if (e.data === 'gameOrientationChange') {
+      setTimeout(forceReflow, 50);
+      setTimeout(forceReflow, 400);
+    }
   });
 
   // ---- Orientation change: force reflow ----
   // iOS Safari等で横→縦に戻した際に vh などが古い値で固定されるのを補正
-  function nudgeReflow() {
-    document.documentElement.style.display = 'none';
-    // Trigger reflow
-    void document.documentElement.offsetHeight;
-    document.documentElement.style.display = '';
-  }
   window.addEventListener('orientationchange', () => {
-    setTimeout(nudgeReflow, 100);
-    setTimeout(nudgeReflow, 400);
+    setTimeout(forceReflow, 100);
+    setTimeout(forceReflow, 400);
+    setTimeout(forceReflow, 900);
   });
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', () => {
+      setTimeout(forceReflow, 50);
+    });
+  }
 
   // ---- Active nav link on scroll ----
   const sections = document.querySelectorAll('section[id]');
