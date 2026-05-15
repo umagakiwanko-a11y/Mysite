@@ -7,86 +7,54 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700&display=swap" rel="stylesheet">
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
-    body {
-      background:#020817; color:#e8f4f8;
-      font-family:'Outfit',sans-serif;
-      overflow:hidden; height:100dvh;
-    }
+    body { background:#020817; color:#e8f4f8; font-family:'Outfit',sans-serif; overflow:hidden; height:100dvh; }
     canvas {
-      display: block;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100dvw;
-      height: 100dvh;
-      touch-action: none;
+      display:block; position:fixed; top:0; left:0;
+      width:100dvw; height:100dvh; touch-action:none;
     }
 
     /* HUD */
     #hud {
       position:fixed; top:1rem; left:0; right:0;
-      display:flex; justify-content:space-between;
+      display:flex; justify-content:space-between; gap:0.5rem;
       padding:0 1.2rem; pointer-events:none; z-index:5;
     }
     .hud-panel {
-      background:rgba(2,8,23,0.72);
-      border:1px solid rgba(0,212,255,0.15);
-      border-radius:8px; padding:0.4rem 1rem;
-      backdrop-filter:blur(10px);
-      min-width:80px; text-align:center;
+      background:rgba(2,8,23,0.72); border:1px solid rgba(0,212,255,0.15);
+      border-radius:8px; padding:0.4rem 0.9rem;
+      backdrop-filter:blur(10px); min-width:70px; text-align:center;
     }
-    .hud-label {
-      font-size:0.55rem; letter-spacing:0.22em;
-      text-transform:uppercase; color:rgba(0,212,255,0.55);
-      margin-bottom:1px;
-    }
-    .hud-value {
-      font-size:1.25rem; font-weight:700; color:#00d4ff;
-      text-shadow:0 0 12px rgba(0,212,255,0.5);
-    }
+    .hud-label { font-size:0.5rem; letter-spacing:0.2em; text-transform:uppercase; color:rgba(0,212,255,0.5); margin-bottom:1px; }
+    .hud-value { font-size:1.1rem; font-weight:700; color:#00d4ff; text-shadow:0 0 10px rgba(0,212,255,0.5); }
+    #zoneDisplay { font-size:0.6rem; letter-spacing:0.1em; color:rgba(0,212,255,0.5); text-align:center; }
 
-    /* Mobile touch zones */
-    #touchLeft, #touchRight {
-      position:fixed; top:0; bottom:0; width:50%;
-      z-index:3; opacity:0;
-    }
-    #touchLeft  { left:0; }
-    #touchRight { right:0; }
+    /* Touch zones */
+    #touchLeft,#touchRight { position:fixed; top:0; bottom:0; width:50%; z-index:3; opacity:0; }
+    #touchLeft { left:0; } #touchRight { right:0; }
 
     /* Overlay */
     #overlay {
-      position:fixed; inset:0;
-      display:flex; flex-direction:column;
+      position:fixed; inset:0; display:flex; flex-direction:column;
       align-items:center; justify-content:center;
-      background:rgba(2,8,23,0.88);
-      backdrop-filter:blur(14px);
-      z-index:10; gap:1.4rem;
-      text-align:center; padding:2rem;
-      transition:opacity 0.4s;
+      background:rgba(2,8,23,0.9); backdrop-filter:blur(14px);
+      z-index:10; gap:1rem; text-align:center; padding:1.5rem;
+      transition:opacity 0.4s; overflow-y:auto;
     }
     #overlay.hidden { opacity:0; pointer-events:none; }
     .ov-badge {
-      font-size:0.62rem; letter-spacing:0.22em; text-transform:uppercase;
+      font-size:0.6rem; letter-spacing:0.22em; text-transform:uppercase;
       color:#00d4ff; border:1px solid rgba(0,212,255,0.28);
-      padding:0.3rem 1.1rem; border-radius:50px;
-      background:rgba(0,212,255,0.07);
+      padding:0.3rem 1.1rem; border-radius:50px; background:rgba(0,212,255,0.07);
     }
-    .ov-title {
-      font-size:clamp(2.2rem,10vw,4.5rem); font-weight:700;
-      color:#fff; line-height:1; letter-spacing:0.02em;
-    }
+    .ov-title { font-size:clamp(2rem,10vw,4rem); font-weight:700; color:#fff; line-height:1.1; }
     .ov-title span { color:#00d4ff; text-shadow:0 0 30px rgba(0,212,255,0.5); }
-    .ov-catch {
-      font-size:0.88rem; color:#8bafc4; line-height:1.9;
-      max-width:360px;
-    }
-    .ov-score { font-size:0.85rem; color:#8bafc4; line-height:2; }
-    .ov-score strong {
-      font-size:2.4rem; font-weight:700; color:#00d4ff; display:block;
-      text-shadow:0 0 20px rgba(0,212,255,0.55);
-    }
-    .ov-score .ov-best-line { font-size:0.78rem; color:rgba(139,175,196,0.7); }
+    .ov-catch { font-size:0.85rem; color:#8bafc4; line-height:1.9; max-width:340px; }
+    .ov-score { font-size:0.82rem; color:#8bafc4; }
+    .ov-score strong { font-size:2.2rem; font-weight:700; color:#00d4ff; display:block; text-shadow:0 0 20px rgba(0,212,255,0.5); }
+    .ov-score .ov-best-line { font-size:0.75rem; color:rgba(139,175,196,0.7); }
+    .ov-btns { display:flex; flex-direction:column; gap:0.7rem; width:100%; max-width:280px; }
     #startBtn {
-      padding:0.85rem 3rem;
+      padding:0.85rem 2rem;
       background:linear-gradient(135deg,#2980b9,#00d4ff);
       color:#020817; border:none; border-radius:6px;
       font-size:1rem; font-weight:700; cursor:pointer;
@@ -94,28 +62,57 @@
       transition:transform 0.2s, box-shadow 0.2s;
       box-shadow:0 4px 20px rgba(0,212,255,0.25);
     }
-    #startBtn:hover { transform:translateY(-2px); box-shadow:0 8px 32px rgba(0,212,255,0.4); }
-    .ov-controls { font-size:0.72rem; color:rgba(139,175,196,0.5); }
+    #startBtn:hover { transform:translateY(-2px); box-shadow:0 8px 30px rgba(0,212,255,0.4); }
+    .btn-secondary {
+      padding:0.7rem 2rem; background:transparent;
+      color:rgba(0,212,255,0.75); border:1px solid rgba(0,212,255,0.25);
+      border-radius:6px; font-size:0.85rem; font-weight:500;
+      cursor:pointer; font-family:'Outfit',sans-serif;
+      transition:all 0.25s;
+    }
+    .btn-secondary:hover { border-color:var(--glow,#00d4ff); color:#00d4ff; background:rgba(0,212,255,0.06); }
+    .ov-controls { font-size:0.7rem; color:rgba(139,175,196,0.5); }
     .ov-controls span { border:1px solid rgba(0,212,255,0.2); padding:0.1rem 0.5rem; border-radius:4px; margin:0 2px; }
+
+    /* Finds (new creatures this run) */
+    .ov-finds { width:100%; max-width:340px; }
+    .ov-finds-label { font-size:0.62rem; letter-spacing:0.18em; text-transform:uppercase; color:#00ffcc; margin-bottom:0.7rem; }
+    .ov-finds-grid { display:flex; flex-wrap:wrap; justify-content:center; gap:0.8rem; }
+    .ov-find-item { display:flex; flex-direction:column; align-items:center; gap:0.3rem; }
+    .ov-find-item canvas { border-radius:8px; background:rgba(0,255,204,0.06); border:1px solid rgba(0,255,204,0.2); }
+    .ov-find-item span { font-size:0.65rem; color:#00ffcc; }
+
+    /* Bestiary */
+    .bestiary-grid {
+      display:grid; grid-template-columns:repeat(auto-fill, minmax(90px, 1fr));
+      gap:0.8rem; width:100%; max-width:540px; max-height:50vh;
+      overflow-y:auto; padding:0.5rem;
+    }
+    .bestiary-item {
+      display:flex; flex-direction:column; align-items:center; gap:0.3rem;
+      background:rgba(15,32,53,0.6); border:1px solid rgba(0,212,255,0.08);
+      border-radius:10px; padding:0.7rem 0.5rem;
+    }
+    .bestiary-item.found { border-color:rgba(0,212,255,0.2); }
+    .bestiary-item canvas { border-radius:6px; }
+    .bestiary-name { font-size:0.62rem; color:#8bafc4; text-align:center; line-height:1.4; }
+    .bestiary-item.found .bestiary-name { color:#e8f4f8; }
+    .bestiary-depth { font-size:0.55rem; color:rgba(139,175,196,0.5); font-family:'Outfit',sans-serif; }
+    .bestiary-item.found .bestiary-depth { color:rgba(0,212,255,0.6); }
 
     #backLink {
       position:fixed; bottom:1.2rem; left:50%; transform:translateX(-50%);
-      font-size:0.72rem; letter-spacing:0.1em;
-      color:rgba(0,212,255,0.4); background:none; border:none;
-      cursor:pointer; font-family:'Outfit',sans-serif;
-      transition:color 0.3s; z-index:6; white-space:nowrap;
-      padding:0.4rem 0.8rem;
+      font-size:0.7rem; letter-spacing:0.1em; color:rgba(0,212,255,0.35);
+      background:none; border:none; cursor:pointer; font-family:'Outfit',sans-serif;
+      transition:color 0.3s; z-index:6; white-space:nowrap; padding:0.4rem 0.8rem;
     }
     #backLink:hover { color:#00d4ff; }
 
-    /* Milestone flash */
     #milestone {
       position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
-      font-size:clamp(1.2rem,5vw,2rem); font-weight:700;
-      color:#00d4ff; text-shadow:0 0 30px rgba(0,212,255,0.8);
-      pointer-events:none; z-index:8; opacity:0;
-      transition:opacity 0.2s;
-      white-space:nowrap;
+      font-size:clamp(1rem,4vw,1.6rem); font-weight:700;
+      pointer-events:none; z-index:8; opacity:0; transition:opacity 0.2s;
+      white-space:nowrap; text-align:center;
     }
     #milestone.show { opacity:1; }
   </style>
@@ -128,9 +125,13 @@
       <div class="hud-label">DEPTH</div>
       <div class="hud-value" id="depthVal">0m</div>
     </div>
+    <div class="hud-panel" style="flex:1;">
+      <div class="hud-label">ZONE</div>
+      <div id="zoneDisplay">浅海帯</div>
+    </div>
     <div class="hud-panel">
-      <div class="hud-label">BEST</div>
-      <div class="hud-value" id="bestVal">0m</div>
+      <div class="hud-label">図鑑</div>
+      <div class="hud-value" id="collectedVal">0/8</div>
     </div>
   </div>
 
@@ -140,490 +141,814 @@
   <div id="overlay">
     <div class="ov-badge">the Fathom AI — Mini Game</div>
     <h1 class="ov-title">DEEP<br><span>DIVE</span></h1>
-    <p class="ov-catch">深く潜るほど、見えてくる。<br>クラゲと岩を避けながら、深海の底を目指せ。</p>
+    <p class="ov-catch">深く潜るほど、新しい生き物に出会える。<br>クラゲと岩を避けながら深海の図鑑を埋めよう。</p>
     <button id="startBtn">潜る →</button>
     <p class="ov-controls">
       <span>←</span><span>→</span>キー　または　画面左右タップ
     </p>
   </div>
 
-  <div id="milestone">DEPTH 100m !</div>
+  <div id="milestone"></div>
   <button id="backLink">← 戻る</button>
 
   <script>
   (() => {
-    const canvas = document.getElementById('c');
-    const ctx = canvas.getContext('2d');
+    // ============================================================
+    // CREATURE DEFINITIONS
+    // ============================================================
+    const CREATURES = [
+      {
+        id: 'firefly_squid', name: 'ホタルイカ',
+        depth: [0, 250], rarity: 1.0, hitR: 18,
+        glowColor: '#3366ff',
+        desc: '無数の発光器を持つ小さなイカ。青い光で海を染める。',
+        draw(ctx, x, y, t) {
+          ctx.save(); ctx.translate(x, y);
+          const b = Math.sin(t * 2.5) * 0.12 + 0.88;
+          ctx.fillStyle = `rgba(70,50,140,${0.88 * b})`;
+          ctx.beginPath(); ctx.ellipse(0, 0, 8, 13, 0, 0, Math.PI * 2); ctx.fill();
+          ctx.strokeStyle = `rgba(100,80,200,0.6)`; ctx.lineWidth = 1;
+          for (let i = -2; i <= 2; i++) {
+            ctx.beginPath(); ctx.moveTo(i * 2.5, 11);
+            ctx.lineTo(i * 3 + Math.sin(t * 3 + i) * 2, 20); ctx.stroke();
+          }
+          const spots = [[-5,-5],[4,-2],[-2,3],[5,5],[-4,7],[3,-7]];
+          spots.forEach(([sx, sy]) => {
+            const p = Math.sin(t * 4 + sx + sy) * 0.5 + 0.5;
+            ctx.shadowColor = '#3366ff'; ctx.shadowBlur = 10 * p;
+            ctx.fillStyle = `rgba(100,160,255,${0.9 * p})`;
+            ctx.beginPath(); ctx.arc(sx, sy, 1.8, 0, Math.PI * 2); ctx.fill();
+          });
+          ctx.shadowBlur = 0; ctx.restore();
+        }
+      },
+      {
+        id: 'cuttlefish', name: 'コウイカ',
+        depth: [0, 400], rarity: 0.82, hitR: 22,
+        glowColor: '#00ffcc',
+        desc: '体の色と模様を瞬時に変える深海の変装名人。',
+        draw(ctx, x, y, t) {
+          ctx.save(); ctx.translate(x, y);
+          const hue = 180 + Math.sin(t * 0.8) * 35;
+          ctx.fillStyle = `hsla(${hue},65%,35%,0.88)`;
+          ctx.beginPath(); ctx.ellipse(0, 0, 20, 11, 0, 0, Math.PI * 2); ctx.fill();
+          ctx.strokeStyle = `hsla(${hue + 40},80%,65%,0.35)`; ctx.lineWidth = 1.5;
+          for (let i = -2; i <= 2; i++) {
+            ctx.beginPath(); ctx.moveTo(i * 6, -9); ctx.lineTo(i * 6, 9); ctx.stroke();
+          }
+          ctx.strokeStyle = `rgba(0,220,190,0.65)`; ctx.lineWidth = 1;
+          for (let i = 0; i < 10; i++) {
+            const a = (i / 10) * Math.PI * 2 + Math.sin(t * 1.5 + i) * 0.15;
+            ctx.beginPath();
+            ctx.moveTo(Math.cos(a) * 20, Math.sin(a) * 11);
+            ctx.lineTo(Math.cos(a) * 27, Math.sin(a) * 15); ctx.stroke();
+          }
+          ctx.fillStyle = '#fff';
+          ctx.beginPath(); ctx.ellipse(10, 0, 3.5, 2.5, 0, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = '#0a1020';
+          ctx.beginPath(); ctx.arc(10.5, 0, 1.5, 0, Math.PI * 2); ctx.fill();
+          ctx.restore();
+        }
+      },
+      {
+        id: 'anglerfish', name: 'チョウチンアンコウ',
+        depth: [200, 700], rarity: 0.58, hitR: 26,
+        glowColor: '#00d4ff',
+        desc: '暗闇に輝く釣り竿で獲物を誘う深海の猟師。',
+        draw(ctx, x, y, t) {
+          ctx.save(); ctx.translate(x, y);
+          ctx.fillStyle = '#150820'; ctx.strokeStyle = 'rgba(0,212,255,0.25)'; ctx.lineWidth = 1;
+          ctx.beginPath(); ctx.ellipse(0, 2, 24, 19, 0, 0, Math.PI * 2);
+          ctx.fill(); ctx.stroke();
+          ctx.fillStyle = 'rgba(210,225,255,0.75)';
+          for (let i = -3; i <= 3; i++) {
+            ctx.beginPath();
+            ctx.moveTo(i * 5.5, 14); ctx.lineTo(i * 5 - 2, 23); ctx.lineTo(i * 5 + 2, 23);
+            ctx.fill();
+          }
+          ctx.fillStyle = 'rgba(255,210,80,0.95)';
+          ctx.beginPath(); ctx.arc(-7, -3, 7, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = '#05000e';
+          ctx.beginPath(); ctx.arc(-6, -3, 3.5, 0, Math.PI * 2); ctx.fill();
+          const sw = Math.sin(t * 2) * 6;
+          const lp = Math.sin(t * 4) * 0.35 + 0.65;
+          ctx.strokeStyle = 'rgba(160,170,200,0.5)'; ctx.lineWidth = 1;
+          ctx.beginPath(); ctx.moveTo(-7, -22);
+          ctx.quadraticCurveTo(8 + sw, -34, 15 + sw, -24); ctx.stroke();
+          ctx.shadowColor = '#00d4ff'; ctx.shadowBlur = 22 * lp;
+          ctx.fillStyle = `rgba(0,212,255,${0.95 * lp})`;
+          ctx.beginPath(); ctx.arc(15 + sw, -24, 4.5 * lp, 0, Math.PI * 2); ctx.fill();
+          ctx.shadowBlur = 0; ctx.restore();
+        }
+      },
+      {
+        id: 'nautilus', name: 'オウムガイ',
+        depth: [300, 800], rarity: 0.48, hitR: 24,
+        glowColor: '#ffaa33',
+        desc: '5億年以上変わらぬ姿を持つ生きた化石。',
+        draw(ctx, x, y, t) {
+          ctx.save(); ctx.translate(x, y);
+          ctx.rotate(Math.sin(t * 0.6) * 0.1);
+          ctx.fillStyle = 'rgba(160,100,40,0.55)'; ctx.strokeStyle = 'rgba(220,155,70,0.9)'; ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.arc(0, 0, 22, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+          ctx.strokeStyle = 'rgba(255,190,100,0.4)'; ctx.lineWidth = 1;
+          [6, 11, 16, 20].forEach(r => { ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI * 2); ctx.stroke(); });
+          for (let a = 0; a < Math.PI * 2; a += Math.PI / 5) {
+            ctx.beginPath(); ctx.moveTo(Math.cos(a) * 5, Math.sin(a) * 5);
+            ctx.lineTo(Math.cos(a) * 22, Math.sin(a) * 22); ctx.stroke();
+          }
+          ctx.strokeStyle = 'rgba(230,175,95,0.7)'; ctx.lineWidth = 1;
+          for (let i = 0; i < 7; i++) {
+            const a = (i / 7) * Math.PI + 2.4 + Math.sin(t * 2 + i) * 0.3;
+            ctx.beginPath();
+            ctx.moveTo(Math.cos(a) * 22, Math.sin(a) * 22);
+            ctx.lineTo(Math.cos(a) * 30, Math.sin(a) * 30); ctx.stroke();
+          }
+          ctx.restore();
+        }
+      },
+      {
+        id: 'oarfish', name: 'リュウグウノツカイ',
+        depth: [450, 1000], rarity: 0.33, hitR: 30,
+        glowColor: '#c8d0ff',
+        desc: '体長10mを超える世界最長の硬骨魚。深海の龍。',
+        draw(ctx, x, y, t) {
+          ctx.save(); ctx.translate(x, y);
+          const w = Math.sin(t * 1.4) * 9;
+          ctx.strokeStyle = 'rgba(200,210,245,0.9)'; ctx.lineWidth = 7; ctx.lineCap = 'round';
+          ctx.shadowColor = 'rgba(200,215,255,0.45)'; ctx.shadowBlur = 10;
+          ctx.beginPath(); ctx.moveTo(-65, 0);
+          ctx.quadraticCurveTo(-20, w, 20, -w);
+          ctx.quadraticCurveTo(50, w * 0.5, 65, 0); ctx.stroke();
+          ctx.shadowBlur = 0;
+          ctx.strokeStyle = 'rgba(220,45,45,0.88)'; ctx.lineWidth = 2.5;
+          ctx.beginPath(); ctx.moveTo(-65, -5);
+          for (let i = -65; i <= 65; i += 4) {
+            ctx.lineTo(i, -10 - Math.sin((i + t * 40) * 0.12) * 5);
+          }
+          ctx.stroke();
+          ctx.fillStyle = 'rgba(200,210,245,0.9)';
+          ctx.beginPath(); ctx.ellipse(68, 0, 9, 5, 0, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = '#ffee80';
+          ctx.beginPath(); ctx.arc(72, -1, 3, 0, Math.PI * 2); ctx.fill();
+          ctx.restore();
+        }
+      },
+      {
+        id: 'coelacanth', name: 'シーラカンス',
+        depth: [550, 1100], rarity: 0.22, hitR: 34,
+        glowColor: '#5599ff',
+        desc: '3億6000万年前から変わらない奇跡の古代魚。',
+        draw(ctx, x, y, t) {
+          ctx.save(); ctx.translate(x, y);
+          ctx.translate(0, Math.sin(t * 1.2) * 3);
+          ctx.fillStyle = '#0c1e3c'; ctx.strokeStyle = 'rgba(70,130,220,0.55)'; ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.moveTo(-32, 0);
+          ctx.quadraticCurveTo(-10, -16, 22, -11);
+          ctx.quadraticCurveTo(38, -6, 42, 0);
+          ctx.quadraticCurveTo(38, 6, 22, 11);
+          ctx.quadraticCurveTo(-10, 16, -32, 0);
+          ctx.fill(); ctx.stroke();
+          const spots = [[-10,-5],[6,-9],[18,-4],[2,4],[-16,5],[12,7]];
+          spots.forEach(([sx, sy]) => {
+            ctx.shadowColor = 'rgba(80,150,255,0.9)'; ctx.shadowBlur = 12;
+            ctx.fillStyle = 'rgba(80,150,255,0.72)';
+            ctx.beginPath(); ctx.arc(sx, sy, 3.2, 0, Math.PI * 2); ctx.fill();
+          });
+          ctx.shadowBlur = 0;
+          ctx.fillStyle = 'rgba(15,45,90,0.85)'; ctx.strokeStyle = 'rgba(70,130,220,0.45)';
+          ctx.beginPath(); ctx.ellipse(-4, -16, 9, 5, -0.4, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+          ctx.beginPath(); ctx.ellipse(-4, 16, 9, 5, 0.4, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(-30, 0); ctx.lineTo(-46, -13); ctx.lineTo(-40, 0); ctx.lineTo(-46, 13);
+          ctx.closePath(); ctx.fill(); ctx.stroke();
+          ctx.fillStyle = 'rgba(80,150,255,0.95)';
+          ctx.beginPath(); ctx.arc(24, -4, 5.5, 0, Math.PI * 2); ctx.fill();
+          ctx.fillStyle = '#000';
+          ctx.beginPath(); ctx.arc(24, -4, 2.8, 0, Math.PI * 2); ctx.fill();
+          ctx.restore();
+        }
+      },
+      {
+        id: 'dumbo_octopus', name: 'ダンボタコ',
+        depth: [750, 1400], rarity: 0.27, hitR: 26,
+        glowColor: '#cc66ff',
+        desc: '耳のようなヒレをパタパタさせる愛らしいタコ。',
+        draw(ctx, x, y, t) {
+          ctx.save(); ctx.translate(x, y);
+          const flap = Math.sin(t * 2.8) * 0.45;
+          ctx.fillStyle = 'rgba(185,120,235,0.78)';
+          ctx.save(); ctx.rotate(-0.5 + flap);
+          ctx.beginPath(); ctx.ellipse(-16, -9, 11, 6.5, -0.5, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+          ctx.save(); ctx.rotate(0.5 - flap);
+          ctx.beginPath(); ctx.ellipse(16, -9, 11, 6.5, 0.5, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+          ctx.fillStyle = 'rgba(205,155,248,0.88)'; ctx.strokeStyle = 'rgba(225,180,255,0.4)'; ctx.lineWidth = 1;
+          ctx.beginPath(); ctx.ellipse(0, 0, 19, 21, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+          [[-8, -5],[8, -5]].forEach(([ex, ey]) => {
+            ctx.fillStyle = '#1a0a30';
+            ctx.beginPath(); ctx.arc(ex, ey, 5.5, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = '#fff';
+            ctx.beginPath(); ctx.arc(ex, ey, 2.8, 0, Math.PI * 2); ctx.fill();
+          });
+          ctx.strokeStyle = 'rgba(180,120,230,0.6)'; ctx.lineWidth = 2;
+          for (let i = -2; i <= 2; i++) {
+            ctx.beginPath(); ctx.moveTo(i * 5, 19);
+            ctx.quadraticCurveTo(i * 7 + Math.sin(t * 2 + i) * 4, 30, i * 5.5, 37);
+            ctx.stroke();
+          }
+          ctx.restore();
+        }
+      },
+      {
+        id: 'giant_squid', name: 'ダイオウイカ',
+        depth: [950, 9999], rarity: 0.11, hitR: 38,
+        glowColor: '#ff3366',
+        desc: '体長13mを超える幻の巨大イカ。深海の王者。',
+        draw(ctx, x, y, t) {
+          ctx.save(); ctx.translate(x, y);
+          ctx.fillStyle = 'rgba(115,18,40,0.88)'; ctx.strokeStyle = 'rgba(190,55,80,0.5)'; ctx.lineWidth = 1.5;
+          ctx.beginPath(); ctx.ellipse(0, -8, 15, 32, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+          ctx.fillStyle = 'rgba(95,12,30,0.85)';
+          ctx.beginPath();
+          ctx.moveTo(-15, -32); ctx.quadraticCurveTo(-24, -18, -15, -4);
+          ctx.lineTo(15, -4); ctx.quadraticCurveTo(24, -18, 15, -32); ctx.closePath(); ctx.fill();
+          [[-10,6],[10,6]].forEach(([ex, ey]) => {
+            ctx.fillStyle = 'rgba(255,215,45,0.95)';
+            ctx.beginPath(); ctx.arc(ex, ey, 9, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = '#08000f';
+            ctx.beginPath(); ctx.arc(ex, ey, 5, 0, Math.PI * 2); ctx.fill();
+          });
+          ctx.strokeStyle = 'rgba(160,38,58,0.72)'; ctx.lineWidth = 2.5;
+          for (let i = -3; i <= 3; i++) {
+            const wv = Math.sin(t * 2 + i * 0.9) * 6;
+            ctx.beginPath(); ctx.moveTo(i * 3.5, 22);
+            ctx.quadraticCurveTo(i * 6 + wv, 38, i * 4 + wv * 0.5, 50); ctx.stroke();
+          }
+          ctx.lineWidth = 1.8; ctx.strokeStyle = 'rgba(160,38,58,0.5)';
+          [-1,1].forEach(s => {
+            const wv = Math.sin(t * 1.6 + s) * 9;
+            ctx.beginPath(); ctx.moveTo(s * 4, 22);
+            ctx.quadraticCurveTo(s * 14 + wv, 50, s * 9 + wv * 0.7, 70); ctx.stroke();
+            ctx.fillStyle = 'rgba(200,55,80,0.75)';
+            ctx.beginPath(); ctx.ellipse(s * 9 + wv * 0.7, 70, 5.5, 3.5, 0.3, 0, Math.PI * 2); ctx.fill();
+          });
+          ctx.restore();
+        }
+      },
+    ];
+
+    // ============================================================
+    // SETUP
+    // ============================================================
+    const canvas  = document.getElementById('c');
+    const ctx     = canvas.getContext('2d');
     const depthEl = document.getElementById('depthVal');
-    const bestEl  = document.getElementById('bestVal');
+    const zoneEl  = document.getElementById('zoneDisplay');
+    const colEl   = document.getElementById('collectedVal');
     const overlay = document.getElementById('overlay');
     const mileEl  = document.getElementById('milestone');
 
-    // ---- Resize ----
     let W, H;
     function resize() {
-      // visualViewport が使える場合は優先（iOS Safari で横→縦戻し時に innerWidth が固まる問題を回避）
       const vp = window.visualViewport;
       W = canvas.width  = vp ? Math.round(vp.width)  : document.documentElement.clientWidth;
       H = canvas.height = vp ? Math.round(vp.height) : document.documentElement.clientHeight;
     }
     resize();
     window.addEventListener('resize', resize);
-    // orientationchange は寸法確定まで遅延が必要（特に iOS）
-    window.addEventListener('orientationchange', () => {
-      setTimeout(resize, 200);
-      setTimeout(resize, 500); // 念のため二段階
-    });
-    if (window.visualViewport) {
-      window.visualViewport.addEventListener('resize', resize);
-    }
+    window.addEventListener('orientationchange', () => { setTimeout(resize, 200); setTimeout(resize, 500); });
+    if (window.visualViewport) window.visualViewport.addEventListener('resize', resize);
 
-    // ---- State ----
+    // Persistent collection
+    const COLLECTED = new Set(JSON.parse(localStorage.getItem('fathom_collected') || '[]'));
+    let best = +localStorage.getItem('fathom_deep') || 0;
+    function saveCollection() {
+      localStorage.setItem('fathom_collected', JSON.stringify([...COLLECTED]));
+    }
+    function updateCollectedHUD() {
+      colEl.textContent = COLLECTED.size + '/' + CREATURES.length;
+    }
+    updateCollectedHUD();
+
+    // State
     let state = 'menu';
     let depth = 0, speed = 2.2, frame = 0, shakeAmt = 0;
-    let best = +localStorage.getItem('fathom_deep') || 0;
-    bestEl.textContent = best + 'm';
-
     const diver = { x: 0, y: 0, vx: 0 };
     let obstacles = [], orbs = [], bubbles = [], particles = [];
-    let lastMilestone = 0;
+    let collectibles = [], notifications = [];
+    let sessionCollected = [], lastMilestone = 0;
 
-    // ---- Input ----
+    // Input
     const keys = {};
     let tLeft = false, tRight = false;
-    document.addEventListener('keydown', e => keys[e.key] = true);
-    document.addEventListener('keyup',   e => keys[e.key] = false);
+    document.addEventListener('keydown', e => { keys[e.key] = true; if(['ArrowLeft','ArrowRight'].includes(e.key)) e.preventDefault(); });
+    document.addEventListener('keyup',   e => { keys[e.key] = false; });
+    const tL = document.getElementById('touchLeft');
+    const tR = document.getElementById('touchRight');
+    tL.addEventListener('touchstart', e => { e.preventDefault(); tLeft = true; },  { passive:false });
+    tL.addEventListener('touchend',   e => { e.preventDefault(); tLeft = false; }, { passive:false });
+    tR.addEventListener('touchstart', e => { e.preventDefault(); tRight = true; },  { passive:false });
+    tR.addEventListener('touchend',   e => { e.preventDefault(); tRight = false; }, { passive:false });
 
-    document.getElementById('touchLeft').addEventListener('touchstart',  e => { e.preventDefault(); tLeft=true;  }, {passive:false});
-    document.getElementById('touchLeft').addEventListener('touchend',    e => { e.preventDefault(); tLeft=false; }, {passive:false});
-    document.getElementById('touchRight').addEventListener('touchstart', e => { e.preventDefault(); tRight=true;  }, {passive:false});
-    document.getElementById('touchRight').addEventListener('touchend',   e => { e.preventDefault(); tRight=false; }, {passive:false});
+    // ============================================================
+    // DEPTH ZONES
+    // ============================================================
+    const ZONES = [
+      { min:0,    name:'浅海帯',   color:'#00d4ff' },
+      { min:300,  name:'薄明帯',   color:'#4488ee' },
+      { min:700,  name:'深海帯',   color:'#6644bb' },
+      { min:1200, name:'超深海帯', color:'#992299' },
+      { min:1800, name:'無底帯',   color:'#cc1144' },
+    ];
+    function getZone(d) {
+      for (let i = ZONES.length - 1; i >= 0; i--) {
+        if (d >= ZONES[i].min) return ZONES[i];
+      }
+      return ZONES[0];
+    }
 
-    // ---- Game logic ----
+    // ============================================================
+    // GAME START / RESET
+    // ============================================================
     function startGame() {
-      state  = 'playing';
-      depth  = 0; speed = 2.2; frame = 0; shakeAmt = 0;
+      state = 'playing'; depth = 0; speed = 2.2; frame = 0; shakeAmt = 0;
       diver.x = W / 2; diver.y = H * 0.28; diver.vx = 0;
       obstacles = []; orbs = []; bubbles = []; particles = [];
-      lastMilestone = 0;
+      collectibles = []; notifications = [];
+      sessionCollected = []; lastMilestone = 0;
       overlay.classList.add('hidden');
     }
 
-    function showMilestone(txt) {
+    // ============================================================
+    // MILESTONE / NOTIFICATION
+    // ============================================================
+    function showMilestone(txt, color) {
       mileEl.textContent = txt;
+      mileEl.style.color = color || '#00d4ff';
+      mileEl.style.textShadow = `0 0 30px ${color || '#00d4ff'}88`;
       mileEl.classList.add('show');
-      setTimeout(() => mileEl.classList.remove('show'), 1200);
+      setTimeout(() => mileEl.classList.remove('show'), 1400);
     }
 
+    function addNotif(text, color) {
+      notifications.push({ text, color: color || '#00d4ff', life: 1.0 });
+    }
+
+    // ============================================================
+    // SPAWN HELPERS
+    // ============================================================
     function spawnParticles(x, y, color, n) {
       for (let i = 0; i < n; i++) {
-        const angle = Math.random() * Math.PI * 2;
-        const spd   = 1.5 + Math.random() * 4;
-        particles.push({
-          x, y,
-          vx: Math.cos(angle) * spd,
-          vy: Math.sin(angle) * spd,
-          r:  1.5 + Math.random() * 3,
-          life: 1, decay: 0.025 + Math.random() * 0.03,
-          color,
+        const a = Math.random() * Math.PI * 2, spd = 1.5 + Math.random() * 4;
+        particles.push({ x, y, vx: Math.cos(a)*spd, vy: Math.sin(a)*spd,
+          r: 1.5 + Math.random()*3, life: 1, decay: 0.025 + Math.random()*0.03, color });
+      }
+    }
+
+    function spawnObs() {
+      const type = Math.random() < 0.55 ? 'jelly' : 'rock';
+      const x = 60 + Math.random() * (W - 120);
+      const r = type === 'jelly' ? 16 + Math.random()*18 : 20 + Math.random()*20;
+      obstacles.push({ type, x, y: H + r + 20, r, phase: Math.random()*Math.PI*2 });
+    }
+
+    function spawnOrb() {
+      orbs.push({ x: 60 + Math.random()*(W-120), y: H + 20, r: 9 });
+    }
+
+    function spawnBubble() {
+      bubbles.push({ x: Math.random()*W, y: H+8, r: 1.2+Math.random()*2.8,
+        vx: (Math.random()-0.5)*0.4, vy: -(0.4+Math.random()*1.2), op: 0.1+Math.random()*0.2 });
+    }
+
+    function spawnCollectible() {
+      if (collectibles.length >= 2) return;
+      const eligible = CREATURES.filter(c => depth >= c.depth[0] && depth <= c.depth[1]);
+      if (eligible.length === 0) return;
+      const total = eligible.reduce((s, c) => s + c.rarity, 0);
+      let r = Math.random() * total, creature = eligible[0];
+      for (const c of eligible) { r -= c.rarity; if (r <= 0) { creature = c; break; } }
+      const fromLeft = Math.random() < 0.5;
+      const vx = (fromLeft ? 1 : -1) * (1.0 + Math.random() * 0.8);
+      collectibles.push({
+        creature, x: fromLeft ? -60 : W + 60,
+        y: H * (0.18 + Math.random() * 0.64),
+        vx, t: Math.random() * Math.PI * 2,
+      });
+    }
+
+    // ============================================================
+    // GAME OVER
+    // ============================================================
+    function showGameOver() {
+      const d = Math.floor(depth);
+      const newFindsHTML = sessionCollected.length > 0 ? `
+        <div class="ov-finds">
+          <div class="ov-finds-label">✨ 今回の発見 ${sessionCollected.length}種</div>
+          <div class="ov-finds-grid" id="findsGrid"></div>
+        </div>` : '';
+      overlay.innerHTML = `
+        <div class="ov-badge">GAME OVER</div>
+        <h1 class="ov-title">深さ<span>${d}m</span></h1>
+        <div class="ov-score">
+          <span class="ov-best-line">ベスト記録</span>
+          <strong>${best}m</strong>
+        </div>
+        ${newFindsHTML}
+        <div class="ov-btns">
+          <button id="startBtn">もう一度潜る</button>
+          <button class="btn-secondary" id="bestiaryBtn">🐠 生き物図鑑 (${COLLECTED.size}/${CREATURES.length})</button>
+        </div>
+        <button id="backLinkOv" style="font-size:.7rem;color:rgba(0,212,255,.35);background:none;border:none;cursor:pointer;font-family:'Outfit',sans-serif;padding:.4rem;">← 戻る</button>
+      `;
+      overlay.classList.remove('hidden');
+      document.getElementById('startBtn').addEventListener('click', startGame);
+      document.getElementById('bestiaryBtn').addEventListener('click', showBestiary);
+      document.getElementById('backLinkOv').addEventListener('click', handleBack);
+
+      // Draw found creature portraits
+      if (sessionCollected.length > 0) {
+        const grid = document.getElementById('findsGrid');
+        sessionCollected.forEach(creature => {
+          const item = document.createElement('div');
+          item.className = 'ov-find-item';
+          const cv = document.createElement('canvas');
+          cv.width = 64; cv.height = 64;
+          const pc = cv.getContext('2d');
+          pc.save(); pc.translate(32, 32);
+          creature.draw(pc, 0, 0, 1.2);
+          pc.restore();
+          const sp = document.createElement('span');
+          sp.textContent = creature.name;
+          item.appendChild(cv); item.appendChild(sp);
+          grid.appendChild(item);
         });
       }
     }
 
     function die() {
       state = 'dead';
-      spawnParticles(diver.x, diver.y, 'rgba(0,212,255,', 40);
+      spawnParticles(diver.x, diver.y, 'rgba(0,212,255,0.9)', 40);
       shakeAmt = 12;
       const d = Math.floor(depth);
       if (d > best) { best = d; localStorage.setItem('fathom_deep', best); }
-      bestEl.textContent = best + 'm';
-
-      setTimeout(() => {
-        overlay.classList.remove('hidden');
-        overlay.innerHTML = `
-          <div class="ov-badge">GAME OVER</div>
-          <h1 class="ov-title">深さ<span>${d}m</span></h1>
-          <div class="ov-score">
-            <span class="ov-best-line">ベスト記録</span>
-            <strong>${best}m</strong>
-          </div>
-          <button id="startBtn">もう一度潜る</button>
-          <a href="../index.html" style="font-size:.75rem;color:rgba(0,212,255,.45);text-decoration:none">← ポートフォリオに戻る</a>
-        `;
-        document.getElementById('startBtn').addEventListener('click', startGame);
-      }, 600);
+      document.getElementById('collectedVal').textContent = COLLECTED.size + '/' + CREATURES.length;
+      setTimeout(showGameOver, 650);
     }
 
+    // ============================================================
+    // BESTIARY
+    // ============================================================
+    function showBestiary() {
+      overlay.innerHTML = `
+        <div class="ov-badge">BESTIARY — ${COLLECTED.size} / ${CREATURES.length}</div>
+        <h1 class="ov-title" style="font-size:1.8rem;margin-bottom:.3rem">生き物図鑑</h1>
+        <div class="bestiary-grid" id="bestiaryGrid"></div>
+        <div class="ov-btns" style="max-width:220px">
+          <button class="btn-secondary" id="backFromBestiary">← 戻る</button>
+        </div>
+      `;
+      const grid = document.getElementById('bestiaryGrid');
+      CREATURES.forEach(creature => {
+        const found = COLLECTED.has(creature.id);
+        const item = document.createElement('div');
+        item.className = 'bestiary-item' + (found ? ' found' : '');
+        const cv = document.createElement('canvas');
+        cv.width = 70; cv.height = 70;
+        if (found) {
+          const pc = cv.getContext('2d');
+          pc.save(); pc.translate(35, 38);
+          creature.draw(pc, 0, 0, 1.5);
+          pc.restore();
+        } else {
+          // Silhouette
+          const pc = cv.getContext('2d');
+          pc.save(); pc.translate(35, 38); pc.globalAlpha = 0.12;
+          creature.draw(pc, 0, 0, 1.5);
+          pc.restore();
+        }
+        const nameEl = document.createElement('div');
+        nameEl.className = 'bestiary-name';
+        nameEl.textContent = found ? creature.name : '???';
+        const depthEl2 = document.createElement('div');
+        depthEl2.className = 'bestiary-depth';
+        depthEl2.textContent = found ? creature.depth[0] + 'm〜' : '深さ不明';
+        item.appendChild(cv); item.appendChild(nameEl); item.appendChild(depthEl2);
+        grid.appendChild(item);
+      });
+      document.getElementById('backFromBestiary').addEventListener('click', () => {
+        if (state === 'dead') showGameOver();
+        else { overlay.innerHTML = buildMenuHTML(); attachMenuEvents(); overlay.classList.remove('hidden'); }
+      });
+    }
+
+    function buildMenuHTML() {
+      return `
+        <div class="ov-badge">the Fathom AI — Mini Game</div>
+        <h1 class="ov-title">DEEP<br><span>DIVE</span></h1>
+        <p class="ov-catch">深く潜るほど、新しい生き物に出会える。<br>クラゲと岩を避けながら深海の図鑑を埋めよう。</p>
+        <button id="startBtn">潜る →</button>
+        <p class="ov-controls"><span>←</span><span>→</span>キー　または　画面左右タップ</p>
+      `;
+    }
+    function attachMenuEvents() {
+      document.getElementById('startBtn').addEventListener('click', startGame);
+    }
+
+    // ============================================================
+    // BACK BUTTON
+    // ============================================================
+    function handleBack() {
+      if (window.parent !== window) window.parent.postMessage('closeGame', '*');
+      else window.location.href = '../index.html';
+    }
+    document.getElementById('backLink').addEventListener('click', handleBack);
+
+    // ============================================================
+    // UPDATE
+    // ============================================================
     function update() {
       if (state !== 'playing') return;
       frame++;
-
-      // Speed ramp (caps at 9)
-      speed = Math.min(9, 2.2 + depth * 0.005);
-
-      // Depth
+      speed = Math.min(10, 2.2 + depth * 0.005);
       depth += speed * 0.055;
-      depthEl.textContent = Math.floor(depth) + 'm';
 
-      // Milestone
-      const milestone100 = Math.floor(depth / 100);
-      if (milestone100 > lastMilestone) {
-        lastMilestone = milestone100;
-        showMilestone('DEPTH ' + Math.floor(depth) + 'm !');
+      const zone = getZone(depth);
+      depthEl.textContent = Math.floor(depth) + 'm';
+      zoneEl.textContent = zone.name;
+      zoneEl.style.color = zone.color;
+
+      // Milestones
+      const m100 = Math.floor(depth / 100);
+      if (m100 > lastMilestone) {
+        lastMilestone = m100;
+        const z = getZone(depth);
+        if ([2,5,10,15,20].includes(m100)) showMilestone(`DEPTH ${Math.floor(depth)}m！`, z.color);
       }
 
-      // Shake decay
-      if (shakeAmt > 0) shakeAmt *= 0.85;
-
-      // Diver movement — ピクセル直接制御で小刻みに動く
-      const accel   = 2.8;   // px/frame 加速度
-      const maxSpd  = 9;     // px/frame 上限
-      const friction = 0.78; // 摩擦（高いほどすぐ止まる = 精密）
+      // Diver movement (pixel-based)
+      const accel = 2.8, maxSpd = 9, friction = 0.78;
       if (keys['ArrowLeft']  || keys['a'] || keys['A'] || tLeft)  diver.vx -= accel;
       if (keys['ArrowRight'] || keys['d'] || keys['D'] || tRight) diver.vx += accel;
       diver.vx = Math.max(-maxSpd, Math.min(maxSpd, diver.vx));
       diver.vx *= friction;
-      if (Math.abs(diver.vx) < 0.05) diver.vx = 0; // 微小ドリフトを止める
+      if (Math.abs(diver.vx) < 0.05) diver.vx = 0;
       diver.x = Math.max(28, Math.min(W - 28, diver.x + diver.vx));
 
-      // Move obstacles up
+      // Move entities
       const dy = speed;
       obstacles.forEach(o => o.y -= dy);
       orbs.forEach(o => o.y -= dy);
-
-      // Bubbles
+      collectibles.forEach(c => { c.x += c.vx; c.t += 0.045; c.y += Math.sin(c.t) * 0.6; });
       bubbles.forEach(b => { b.x += b.vx; b.y += b.vy; });
-
-      // Particles
-      particles.forEach(p => {
-        p.x += p.vx; p.y += p.vy;
-        p.vx *= 0.95; p.vy *= 0.95;
-        p.life -= p.decay;
-      });
+      particles.forEach(p => { p.x += p.vx; p.y += p.vy; p.vx *= 0.94; p.vy *= 0.94; p.life -= p.decay; });
 
       // Prune
       obstacles = obstacles.filter(o => o.y > -80);
-      orbs       = orbs.filter(o => o.y > -20);
-      bubbles    = bubbles.filter(b => b.y > -20);
-      particles  = particles.filter(p => p.life > 0);
+      orbs = orbs.filter(o => o.y > -20);
+      collectibles = collectibles.filter(c => c.x > -120 && c.x < W + 120);
+      bubbles = bubbles.filter(b => b.y > -20);
+      particles = particles.filter(p => p.life > 0);
 
-      // Spawn obstacles
-      const rate = Math.max(42, 110 - depth * 0.28);
-      if (frame % Math.round(rate) === 0) spawnObs();
+      // Spawn
+      const obsRate = Math.max(40, 110 - depth * 0.25);
+      if (frame % Math.round(obsRate) === 0) spawnObs();
+      if (frame % 185 === 0) spawnOrb();
+      if (frame % 5 === 0) spawnBubble();
+      const colRate = Math.max(280, 520 - depth * 0.15);
+      if (frame % Math.round(colRate) === 0) spawnCollectible();
 
-      // Spawn orbs
-      if (frame % 180 === 0) spawnOrb();
-
-      // Spawn bubbles
-      if (frame % 6 === 0) spawnBubble();
-
-      // Collision — obstacles
+      // Obstacle collision
       for (const o of obstacles) {
-        const dx = o.x - diver.x;
-        const dy2 = o.y - diver.y;
-        if (Math.hypot(dx, dy2) < o.r + 13) { die(); return; }
+        if (Math.hypot(o.x - diver.x, o.y - diver.y) < o.r + 13) { die(); return; }
       }
 
-      // Collect orbs
+      // Orb collect
       for (let i = orbs.length - 1; i >= 0; i--) {
-        const dx = orbs[i].x - diver.x;
-        const dy2 = orbs[i].y - diver.y;
-        if (Math.hypot(dx, dy2) < orbs[i].r + 18) {
-          spawnParticles(orbs[i].x, orbs[i].y, 'rgba(255,200,50,', 12);
+        if (Math.hypot(orbs[i].x - diver.x, orbs[i].y - diver.y) < orbs[i].r + 18) {
+          spawnParticles(orbs[i].x, orbs[i].y, 'rgba(255,200,50,0.9)', 12);
           orbs.splice(i, 1);
+        }
+      }
+
+      // Creature collect
+      for (let i = collectibles.length - 1; i >= 0; i--) {
+        const c = collectibles[i];
+        if (Math.hypot(c.x - diver.x, c.y - diver.y) < c.creature.hitR + 20) {
+          const isNew = !COLLECTED.has(c.creature.id);
+          COLLECTED.add(c.creature.id);
+          saveCollection();
+          updateCollectedHUD();
+          if (isNew) {
+            sessionCollected.push(c.creature);
+            addNotif('✨ 初発見！  ' + c.creature.name, '#00ffcc');
+            showMilestone('✨ ' + c.creature.name + ' 発見！', '#00ffcc');
+          } else {
+            addNotif('✨ ' + c.creature.name, '#00d4ff');
+          }
+          spawnParticles(c.x, c.y, c.creature.glowColor, 18);
+          collectibles.splice(i, 1);
         }
       }
     }
 
-    function spawnObs() {
-      const type = Math.random() < 0.55 ? 'jelly' : 'rock';
-      const margin = 60;
-      const x = margin + Math.random() * (W - margin * 2);
-      const r = type === 'jelly' ? 16 + Math.random() * 18 : 20 + Math.random() * 20;
-      obstacles.push({ type, x, y: H + r + 20, r, phase: Math.random() * Math.PI * 2 });
-    }
-
-    function spawnOrb() {
-      orbs.push({ x: 60 + Math.random() * (W - 120), y: H + 20, r: 9 });
-    }
-
-    function spawnBubble() {
-      bubbles.push({
-        x: Math.random() * W,
-        y: H + 8,
-        r: 1.2 + Math.random() * 2.8,
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: -(0.4 + Math.random() * 1.2),
-        op: 0.12 + Math.random() * 0.25,
-      });
-    }
-
-    // ---- Draw helpers ----
-    function drawBg() {
-      // Dark gradient that gets slightly deeper with depth
-      const t = Math.min(1, depth / 600);
-      const topC = lerpColor([2,8,23], [1,5,18], t);
-      const botC = lerpColor([4,12,30], [2,7,22], t);
-      const grad = ctx.createLinearGradient(0, 0, 0, H);
-      grad.addColorStop(0, `rgb(${topC})`);
-      grad.addColorStop(1, `rgb(${botC})`);
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, W, H);
-
-      // Light rays from surface
-      for (let i = 0; i < 6; i++) {
-        const rx = (W / 7) * (i + 0.5);
-        const alpha = (0.015 - t * 0.01) * (Math.sin(i * 1.4 + frame * 0.002) * 0.4 + 0.7);
-        if (alpha <= 0) continue;
-        const rayGrad = ctx.createLinearGradient(0, 0, 0, H * 0.55);
-        rayGrad.addColorStop(0, `rgba(0,212,255,${alpha})`);
-        rayGrad.addColorStop(1, 'rgba(0,212,255,0)');
-        ctx.save();
-        ctx.translate(rx, 0);
-        ctx.rotate(Math.sin(i * 1.2 + frame * 0.003) * 0.08);
-        ctx.fillStyle = rayGrad;
-        ctx.beginPath();
-        ctx.moveTo(-25, 0); ctx.lineTo(25, 0);
-        ctx.lineTo(55, H * 0.55); ctx.lineTo(-55, H * 0.55);
-        ctx.fill();
-        ctx.restore();
-      }
-    }
-
+    // ============================================================
+    // DRAW HELPERS
+    // ============================================================
     function lerpColor(a, b, t) {
-      return a.map((v, i) => Math.round(v + (b[i] - v) * t)).join(',');
+      return a.map((v,i) => Math.round(v+(b[i]-v)*t)).join(',');
+    }
+
+    function drawBg() {
+      const t = Math.min(1, depth / 800);
+      const grad = ctx.createLinearGradient(0, 0, 0, H);
+      grad.addColorStop(0, `rgb(${lerpColor([2,8,23],[1,4,16],t)})`);
+      grad.addColorStop(1, `rgb(${lerpColor([4,12,30],[2,6,20],t)})`);
+      ctx.fillStyle = grad; ctx.fillRect(0, 0, W, H);
+      const rayAlpha = Math.max(0, 0.022 - t * 0.018);
+      if (rayAlpha > 0) {
+        for (let i = 0; i < 6; i++) {
+          const rx = (W / 7) * (i + 0.5);
+          const a2 = rayAlpha * (Math.sin(i * 1.4 + frame * 0.002) * 0.4 + 0.7);
+          const rg = ctx.createLinearGradient(0, 0, 0, H * 0.55);
+          rg.addColorStop(0, `rgba(0,212,255,${a2})`); rg.addColorStop(1, 'rgba(0,212,255,0)');
+          ctx.save(); ctx.translate(rx, 0); ctx.rotate(Math.sin(i * 1.2 + frame * 0.003) * 0.08);
+          ctx.fillStyle = rg; ctx.beginPath();
+          ctx.moveTo(-25,0); ctx.lineTo(25,0); ctx.lineTo(55,H*0.55); ctx.lineTo(-55,H*0.55);
+          ctx.fill(); ctx.restore();
+        }
+      }
     }
 
     function drawBubbles() {
       bubbles.forEach(b => {
-        ctx.save();
-        ctx.strokeStyle = `rgba(0,212,255,${b.op})`;
-        ctx.lineWidth = 0.8;
-        ctx.beginPath();
-        ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.restore();
+        ctx.save(); ctx.strokeStyle = `rgba(0,212,255,${b.op})`; ctx.lineWidth = 0.8;
+        ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
       });
     }
 
     function drawParticles() {
       particles.forEach(p => {
-        ctx.save();
-        ctx.globalAlpha = p.life;
-        ctx.fillStyle = p.color + '0.9)';
-        ctx.shadowColor = p.color + '0.6)';
-        ctx.shadowBlur = 6;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r * p.life, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.save(); ctx.globalAlpha = p.life;
+        ctx.fillStyle = p.color; ctx.shadowColor = p.color; ctx.shadowBlur = 6;
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.r * p.life, 0, Math.PI * 2); ctx.fill();
         ctx.restore();
       });
     }
 
     function drawJellyfish(o) {
       const { x, y, r, phase } = o;
-      const t = frame * 0.045 + phase;
-      const pulse = 0.88 + Math.sin(t) * 0.12;
-
-      ctx.save();
-      ctx.translate(x, y);
-
-      // Outer glow
-      const gGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, r * 2);
-      gGrad.addColorStop(0, 'rgba(200,80,255,0.18)');
-      gGrad.addColorStop(1, 'rgba(200,80,255,0)');
-      ctx.fillStyle = gGrad;
-      ctx.beginPath(); ctx.arc(0, 0, r * 2, 0, Math.PI * 2); ctx.fill();
-
-      // Bell
-      ctx.shadowColor = 'rgba(220,90,255,0.65)';
-      ctx.shadowBlur = 18;
-      ctx.fillStyle   = 'rgba(220,90,255,0.3)';
-      ctx.strokeStyle = 'rgba(230,110,255,0.85)';
-      ctx.lineWidth   = 1.5;
-      ctx.beginPath();
-      ctx.ellipse(0, 0, r * pulse, r * 0.65 * pulse, 0, Math.PI, Math.PI * 2);
+      const t = frame * 0.045 + phase, pulse = 0.88 + Math.sin(t) * 0.12;
+      ctx.save(); ctx.translate(x, y);
+      const gG = ctx.createRadialGradient(0,0,0,0,0,r*2);
+      gG.addColorStop(0,'rgba(200,80,255,0.18)'); gG.addColorStop(1,'rgba(200,80,255,0)');
+      ctx.fillStyle = gG; ctx.beginPath(); ctx.arc(0,0,r*2,0,Math.PI*2); ctx.fill();
+      ctx.shadowColor='rgba(220,90,255,0.65)'; ctx.shadowBlur=18;
+      ctx.fillStyle='rgba(220,90,255,0.3)'; ctx.strokeStyle='rgba(230,110,255,0.85)'; ctx.lineWidth=1.5;
+      ctx.beginPath(); ctx.ellipse(0,0,r*pulse,r*0.65*pulse,0,Math.PI,Math.PI*2);
       ctx.fill(); ctx.stroke();
-
-      // Inner pattern
-      ctx.strokeStyle = 'rgba(255,160,255,0.3)';
-      ctx.lineWidth   = 1;
-      ctx.beginPath();
-      ctx.ellipse(0, -r*0.2*pulse, r*0.5*pulse, r*0.25*pulse, 0, 0, Math.PI*2);
-      ctx.stroke();
-
-      // Tentacles
-      ctx.shadowBlur  = 8;
-      ctx.strokeStyle = 'rgba(220,90,255,0.45)';
-      ctx.lineWidth   = 1;
-      const numT = 7;
-      for (let i = 0; i < numT; i++) {
-        const tx = (i - (numT-1)/2) * (r / 3);
-        ctx.beginPath(); ctx.moveTo(tx, 0);
-        for (let j = 1; j <= 6; j++) {
-          ctx.lineTo(tx + Math.sin(t * 1.2 + i + j * 0.8) * 4, j * 7);
-        }
+      ctx.shadowBlur=8; ctx.strokeStyle='rgba(220,90,255,0.45)'; ctx.lineWidth=1;
+      for (let i=0;i<7;i++) {
+        const tx=(i-3)*(r/3.2);
+        ctx.beginPath(); ctx.moveTo(tx,0);
+        for (let j=1;j<=6;j++) ctx.lineTo(tx+Math.sin(t*1.2+i+j*0.8)*4,j*7);
         ctx.stroke();
       }
-      ctx.shadowBlur = 0;
-      ctx.restore();
+      ctx.shadowBlur=0; ctx.restore();
     }
 
     function drawRock(o) {
       const { x, y, r } = o;
-      ctx.save();
-      ctx.translate(x, y);
-      ctx.shadowColor = 'rgba(0,212,255,0.3)';
-      ctx.shadowBlur  = 12;
-      ctx.fillStyle   = 'rgba(10,20,40,0.92)';
-      ctx.strokeStyle = 'rgba(0,212,255,0.28)';
-      ctx.lineWidth   = 1.5;
+      ctx.save(); ctx.translate(x, y);
+      ctx.shadowColor='rgba(0,212,255,0.3)'; ctx.shadowBlur=12;
+      ctx.fillStyle='rgba(10,20,40,0.93)'; ctx.strokeStyle='rgba(0,212,255,0.28)'; ctx.lineWidth=1.5;
       ctx.beginPath();
-      // Irregular polygon
-      const pts = [
-        [-r*.55, r*.45], [-r, r*.1], [-r*.85, -r*.45],
-        [-r*.3, -r], [r*.35, -r*.85], [r, -r*.25],
-        [r*.75, r*.55],
-      ];
-      ctx.moveTo(pts[0][0], pts[0][1]);
-      pts.slice(1).forEach(p => ctx.lineTo(p[0], p[1]));
-      ctx.closePath();
-      ctx.fill(); ctx.stroke();
-
-      // Highlight edge
-      ctx.strokeStyle = 'rgba(0,212,255,0.1)';
-      ctx.lineWidth = 3;
-      ctx.stroke();
-      ctx.shadowBlur = 0;
-      ctx.restore();
+      const pts=[[-r*.55,r*.45],[-r,r*.1],[-r*.85,-r*.45],[-r*.3,-r],[r*.35,-r*.85],[r,-r*.25],[r*.75,r*.55]];
+      ctx.moveTo(pts[0][0],pts[0][1]);
+      pts.slice(1).forEach(p=>ctx.lineTo(p[0],p[1]));
+      ctx.closePath(); ctx.fill(); ctx.stroke();
+      ctx.shadowBlur=0; ctx.restore();
     }
 
     function drawOrb(o) {
-      const { x, y, r } = o;
-      const pulse = 0.75 + Math.sin(frame * 0.07 + x) * 0.25;
+      const { x, y, r } = o, pulse=0.75+Math.sin(frame*0.07+x)*0.25;
       ctx.save();
-      const gGrad = ctx.createRadialGradient(x, y, 0, x, y, r * 3);
-      gGrad.addColorStop(0,   'rgba(255,210,40,0.55)');
-      gGrad.addColorStop(0.5, 'rgba(255,180,20,0.2)');
-      gGrad.addColorStop(1,   'rgba(255,160,0,0)');
-      ctx.fillStyle = gGrad;
-      ctx.beginPath(); ctx.arc(x, y, r * 3 * pulse, 0, Math.PI * 2); ctx.fill();
-      ctx.shadowColor = 'rgba(255,210,40,0.95)';
-      ctx.shadowBlur  = 14;
-      ctx.fillStyle   = '#ffd428';
-      ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
-      ctx.shadowBlur = 0;
-      ctx.restore();
+      const gG=ctx.createRadialGradient(x,y,0,x,y,r*3);
+      gG.addColorStop(0,'rgba(255,210,40,0.55)'); gG.addColorStop(0.5,'rgba(255,180,20,0.2)'); gG.addColorStop(1,'rgba(255,160,0,0)');
+      ctx.fillStyle=gG; ctx.beginPath(); ctx.arc(x,y,r*3*pulse,0,Math.PI*2); ctx.fill();
+      ctx.shadowColor='rgba(255,210,40,0.95)'; ctx.shadowBlur=14;
+      ctx.fillStyle='#ffd428'; ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
+      ctx.shadowBlur=0; ctx.restore();
+    }
+
+    function drawCollectibles() {
+      collectibles.forEach(c => {
+        const { x, y, t, creature } = c;
+        // Glow aura
+        const aura = ctx.createRadialGradient(x, y, 0, x, y, creature.hitR * 2.2);
+        aura.addColorStop(0, creature.glowColor.replace('#','rgba(').replace(/(..)(..)(..)/, (_,r,g,b)=>
+          `${parseInt(r,16)},${parseInt(g,16)},${parseInt(b,16)},`) + '0.18)');
+        aura.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.save(); ctx.fillStyle = aura;
+        ctx.beginPath(); ctx.arc(x, y, creature.hitR * 2.2, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+        // Draw creature
+        creature.draw(ctx, x, y, t);
+        // Name tag on hover (always show for discoverability)
+        const tagAlpha = 0.55 + Math.sin(frame * 0.04 + x) * 0.15;
+        if (!COLLECTED.has(creature.id)) {
+          ctx.save(); ctx.globalAlpha = tagAlpha;
+          ctx.fillStyle = creature.glowColor;
+          ctx.font = '500 11px Outfit, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.shadowColor = creature.glowColor; ctx.shadowBlur = 8;
+          ctx.fillText('?', x, y - creature.hitR - 8);
+          ctx.restore();
+        }
+      });
     }
 
     function drawDiver() {
       const { x, y, vx } = diver;
-      const tilt = vx * 18;
-      ctx.save();
-      ctx.translate(x, y);
-      ctx.rotate(tilt * Math.PI / 180);
-
-      ctx.shadowColor = 'rgba(0,212,255,0.5)';
-      ctx.shadowBlur  = 16;
-
-      // Flippers
+      const tilt = vx * 2.5;
+      ctx.save(); ctx.translate(x, y); ctx.rotate(tilt * Math.PI / 180);
+      ctx.shadowColor = 'rgba(0,212,255,0.5)'; ctx.shadowBlur = 16;
       ctx.fillStyle = '#3a8ab0';
-      ctx.beginPath(); ctx.ellipse(-9, 18, 5, 11, -0.25, 0, Math.PI*2); ctx.fill();
-      ctx.beginPath(); ctx.ellipse( 9, 18, 5, 11,  0.25, 0, Math.PI*2); ctx.fill();
-
-      // Body
+      ctx.beginPath(); ctx.ellipse(-9,18,5,11,-0.25,0,Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(9,18,5,11,0.25,0,Math.PI*2); ctx.fill();
       ctx.fillStyle = '#c8dde8';
-      ctx.beginPath(); ctx.ellipse(0, 4, 10, 15, 0, 0, Math.PI*2); ctx.fill();
-
-      // Tank
+      ctx.beginPath(); ctx.ellipse(0,4,10,15,0,0,Math.PI*2); ctx.fill();
       ctx.fillStyle = '#1a3a5c';
-      ctx.beginPath(); ctx.roundRect(-5, -3, 10, 13, 3); ctx.fill();
-
-      // Head
+      ctx.beginPath(); ctx.roundRect(-5,-3,10,13,3); ctx.fill();
       ctx.fillStyle = 'rgba(40,140,180,0.9)';
-      ctx.beginPath(); ctx.ellipse(0, -13, 9, 10, 0, 0, Math.PI*2); ctx.fill();
-
-      // Mask glass
-      ctx.fillStyle = 'rgba(0,212,255,0.28)';
-      ctx.strokeStyle = 'rgba(0,212,255,0.8)';
-      ctx.lineWidth = 1.2;
-      ctx.beginPath(); ctx.ellipse(0, -13, 6, 6.5, 0, 0, Math.PI*2);
-      ctx.fill(); ctx.stroke();
-
-      // Exhaust bubbles
+      ctx.beginPath(); ctx.ellipse(0,-13,9,10,0,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle = 'rgba(0,212,255,0.28)'; ctx.strokeStyle = 'rgba(0,212,255,0.8)'; ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.ellipse(0,-13,6,6.5,0,0,Math.PI*2); ctx.fill(); ctx.stroke();
       if (frame % 12 < 6) {
         ctx.fillStyle = 'rgba(0,212,255,0.4)';
-        ctx.beginPath(); ctx.arc(12, -6, 2, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(12,-6,2,0,Math.PI*2); ctx.fill();
       }
-
-      ctx.shadowBlur = 0;
-      ctx.restore();
+      ctx.shadowBlur = 0; ctx.restore();
     }
 
-    function drawDepthMeter() {
-      // Subtle depth bar on left edge
-      const pct = Math.min(1, depth / 800);
-      const barH = H * 0.4;
-      const barY = H * 0.3;
-      const barX = 12;
-
+    function drawDepthBar() {
+      const pct = Math.min(1, depth / 1000);
+      const bH = H * 0.38, bY = H * 0.31, bX = 12;
       ctx.save();
-      ctx.strokeStyle = 'rgba(0,212,255,0.1)';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(barX, barY); ctx.lineTo(barX, barY + barH);
-      ctx.stroke();
-
-      ctx.strokeStyle = 'rgba(0,212,255,0.55)';
-      ctx.shadowColor = 'rgba(0,212,255,0.4)'; ctx.shadowBlur = 6;
-      ctx.beginPath();
-      ctx.moveTo(barX, barY); ctx.lineTo(barX, barY + barH * pct);
-      ctx.stroke();
-      ctx.shadowBlur = 0;
-      ctx.restore();
+      ctx.strokeStyle = 'rgba(0,212,255,0.08)'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(bX,bY); ctx.lineTo(bX,bY+bH); ctx.stroke();
+      const zone = getZone(depth);
+      ctx.strokeStyle = zone.color; ctx.shadowColor = zone.color + '66'; ctx.shadowBlur = 6;
+      ctx.beginPath(); ctx.moveTo(bX,bY); ctx.lineTo(bX,bY+bH*pct); ctx.stroke();
+      ctx.shadowBlur = 0; ctx.restore();
     }
 
-    // ---- Main loop ----
+    function drawNotifications() {
+      notifications = notifications.filter(n => n.life > 0);
+      let yOff = 0;
+      notifications.forEach(n => {
+        const a = n.life > 0.25 ? 1 : n.life / 0.25;
+        ctx.save(); ctx.globalAlpha = a;
+        ctx.fillStyle = n.color; ctx.shadowColor = n.color; ctx.shadowBlur = 14;
+        ctx.font = '600 16px Outfit, sans-serif'; ctx.textAlign = 'center';
+        ctx.fillText(n.text, W / 2, H * 0.88 - yOff);
+        ctx.restore();
+        yOff += 24;
+        n.life -= 0.006;
+      });
+    }
+
+    // ============================================================
+    // MAIN LOOP
+    // ============================================================
     function loop() {
       try {
         update();
-
-        // Screen shake
         ctx.save();
         if (shakeAmt > 0.5) {
-          ctx.translate(
-            (Math.random() - 0.5) * shakeAmt,
-            (Math.random() - 0.5) * shakeAmt
-          );
+          ctx.translate((Math.random()-0.5)*shakeAmt, (Math.random()-0.5)*shakeAmt);
+          shakeAmt *= 0.84;
         }
-
         drawBg();
         drawBubbles();
         orbs.forEach(drawOrb);
-        obstacles.forEach(o => o.type === 'jelly' ? drawJellyfish(o) : drawRock(o));
+        obstacles.forEach(o => o.type==='jelly' ? drawJellyfish(o) : drawRock(o));
+        drawCollectibles();
         drawParticles();
         if (state === 'playing') drawDiver();
-        drawDepthMeter();
-
+        drawDepthBar();
+        drawNotifications();
         ctx.restore();
       } catch(e) {
-        console.error('LOOP ERROR:', e.message, e.stack);
+        console.error('loop:', e);
       }
       requestAnimationFrame(loop);
     }
 
-    // ---- Init ----
+    // ============================================================
+    // INIT
+    // ============================================================
     document.getElementById('startBtn').addEventListener('click', startGame);
-
-    // 戻るボタン: iframe内ならpostMessage、直接アクセスなら遷移
-    document.getElementById('backLink').addEventListener('click', () => {
-      if (window.parent !== window) {
-        window.parent.postMessage('closeGame', '*');
-      } else {
-        window.location.href = '../index.html';
-      }
-    });
-
     loop();
   })();
   </script>
