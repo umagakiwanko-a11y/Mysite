@@ -11,15 +11,14 @@
       background:#000; color:#e8f4f8; font-family:'Outfit',sans-serif;
       overflow:hidden; height:100dvh;
     }
-    /* キャンバスは固定PC比率（16:10）でビューポート内にレターボックス表示。
-       バッファは固定サイズなので、スマホでも要素の相対サイズはPCと同じ。 */
+    /* キャンバスは画面全体にフィット（黒帯なし）。
+       バッファ幅は1280固定、高さは端末アスペクトに合わせて伸縮するので
+       要素の相対サイズは常にPC感を維持しつつ、端末いっぱいに広がる。 */
     #c {
       display:block;
       position:fixed;
-      top:50%; left:50%;
-      transform:translate(-50%, -50%);
-      width:min(100dvw, calc(100dvh * 16 / 10));
-      height:min(100dvh, calc(100dvw * 10 / 16));
+      top:0; left:0;
+      width:100dvw; height:100dvh;
       touch-action:none;
       background:#020817;
     }
@@ -471,30 +470,42 @@
     const overlay = document.getElementById('overlay');
     const mileEl  = document.getElementById('milestone');
 
-    // ★ バッファサイズはPC比率(16:10)で固定。CSSで実画面にフィット&レターボックス。
-    //    これでスマホでも要素の相対サイズが常にPCと同じになる。
-    const VIRTUAL_W = 1280, VIRTUAL_H = 800;
-    let W = VIRTUAL_W, H = VIRTUAL_H;
+    // ★ バッファ幅は1280固定（PCサイズ感）、高さは端末アスペクトに合わせて伸縮。
+    //    描画はバッファ→ビューポート全体にスケーリングされる：
+    //    - 縦持ちスマホ：背景が縦長の世界、要素は相対的に小さい
+    //    - 横持ち：背景が横長、要素はやや大きい
+    //    - PC：そのまま等倍に近い
+    const VIRTUAL_W = 1280;
+    let W = VIRTUAL_W, H = 800;
     function resize() {
-      canvas.width  = VIRTUAL_W;
-      canvas.height = VIRTUAL_H;
+      const vp = window.visualViewport;
+      const sw = vp ? vp.width  : document.documentElement.clientWidth;
+      const sh = vp ? vp.height : document.documentElement.clientHeight;
       W = VIRTUAL_W;
-      H = VIRTUAL_H;
+      H = Math.max(400, Math.round(VIRTUAL_W * sh / sw));
+      canvas.width  = W;
+      canvas.height = H;
+      // ダイバーは画面上の相対位置を保つ
+      if (state === 'playing') diver.y = H * 0.28;
     }
+    let state = 'menu'; // resize前にも参照されるので早めに宣言（あとで上書きされる）
     resize();
-    // 画面回転時にCSS側で表示サイズが変わるだけ。バッファは触らない。
-    // ただし、親ページに「回転したよ」を通知して、親側でリフローしてもらう
+    window.addEventListener('resize', resize);
+    window.addEventListener('orientationchange', () => {
+      setTimeout(resize, 100);
+      setTimeout(resize, 400);
+      setTimeout(notifyParentOrientation, 500);
+    });
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', () => {
+        resize();
+        notifyParentOrientation();
+      });
+    }
     function notifyParentOrientation() {
       if (window.parent !== window) {
         try { window.parent.postMessage('gameOrientationChange', '*'); } catch(e) {}
       }
-    }
-    window.addEventListener('orientationchange', () => {
-      setTimeout(notifyParentOrientation, 100);
-      setTimeout(notifyParentOrientation, 500);
-    });
-    if (window.visualViewport) {
-      window.visualViewport.addEventListener('resize', notifyParentOrientation);
     }
 
     // Persistent collection
@@ -508,8 +519,7 @@
     }
     updateCollectedHUD();
 
-    // State
-    let state = 'menu';
+    // State (state は resize 前に既に宣言済み)
     let depth = 0, speed = 2.2, frame = 0, shakeAmt = 0;
     let oxygen = 100; // 酸素ゲージ（0でゲームオーバー）
     const diver = { x: 0, y: 0, vx: 0 };
