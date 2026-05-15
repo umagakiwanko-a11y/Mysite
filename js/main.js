@@ -1,5 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+  // ---- Safety: body opacity を必ず可視にリセット（fade out 残り対策） ----
+  // ※ ゲームから戻ってきた時の fade-in 演出は後段で別途処理する
+  if (!sessionStorage.getItem('dive_returnScroll')) {
+    document.body.style.opacity = '1';
+    document.body.style.transition = '';
+  }
+
   // ---- Navbar scroll effect ----
   const navbar = document.getElementById('navbar');
   let lastScroll = 0;
